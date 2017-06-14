@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/vinkky/sportfasy-back-end-nodejs/issues"
   },
-  "homepage": "https://github.com/vinkky/sportfasy-back-end-nodejs#readme"
+  "homepage": "https://github.com/vinkky/sportfasy-back-end-nodejs#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3"
+  }
 }
