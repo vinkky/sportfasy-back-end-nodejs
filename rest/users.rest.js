@@ -11,6 +11,7 @@ module.exports = function (router, User) {
                 updated_at: req.body.updated_at
             });
 
+            // save the user and check for errors
             user.save(function (err) {
                 if (err) {
                     console.log('ERROR CREATING USER: ' + err);
@@ -20,7 +21,17 @@ module.exports = function (router, User) {
                     res.status(200).json({message: 'User created!'});
                 }
             });
-
-            // res.status(200).json({user});
+        })
+        //Get all users
+        .get(function (req, res) {
+            User.find(function (err, users) {
+                if (err) {
+                    console.log('ERROR GETTING USERS: ');
+                    res.status(500).json({error: err});
+                } else {
+                    console.log('SUCCESS GETTING USERS');
+                    res.status(200).json(users);
+                }
+            });
         });
 };
