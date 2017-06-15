@@ -34,4 +34,17 @@ module.exports = function (router, User) {
                 }
             });
         });
+    router.route('/users/:email')
+    // get user by email (accessed at GET http://localhost:3000/api/users/:email)
+        .get(function (req, res) {
+            User.find({ email: req.params.email}, function (err, user) {
+                if (err) {
+                    console.log('ERROR GETTING USER: ');
+                    res.status(500).json({error: err});
+                } else {
+                    console.log('SUCCESS GETTING USER'.green + (' email:' + req.params.email));
+                    res.status(200).json(user);
+                }
+            });
+        });
 };
