@@ -3,6 +3,14 @@ let express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
 let User = require('./models/users');
+let config = require('./config');
+
+// ======
+// MONGO DB
+// ======
+
+let mongoose = require('mongoose');
+mongoose.connect(config.database);
 
 
 // ======
