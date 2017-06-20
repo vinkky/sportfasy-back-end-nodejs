@@ -17,7 +17,6 @@ userSchema.pre('save', function (next) {
     // get the current date
     let currentDate = new Date();
 
-    let that = this;
     let hash = bcrypt.hashSync(this.password, saltRounds);
     this.password = hash;
 

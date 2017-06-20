@@ -4,6 +4,7 @@ let app = express();
 let bodyParser = require('body-parser');
 let User = require('./models/users');
 let config = require('./config');
+let bcrypt = require('bcrypt');
 
 // ======
 // MONGO DB
@@ -44,4 +45,4 @@ app.use('/api', router);
 // ======================================================
 
 
-require('./rest/users.rest.js')(router, User);
+require('./rest/users.rest.js')(router, User , bcrypt);
