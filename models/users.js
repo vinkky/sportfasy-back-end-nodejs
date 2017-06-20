@@ -1,10 +1,12 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
+let bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 let userSchema = new Schema({
-    name: { type: String, required: true,},
-    surname: { type: String, required: true,},
-    password: { type: String, required: true },
+    name: {type: String, required: true,},
+    surname: {type: String, required: true,},
+    password: {type: String, required: true},
     email: {type: String, required: true, unique: true},
     created_at: Date,
     updated_at: Date
@@ -14,6 +16,10 @@ let userSchema = new Schema({
 userSchema.pre('save', function (next) {
     // get the current date
     let currentDate = new Date();
+
+    let that = this;
+    let hash = bcrypt.hashSync(this.password, saltRounds);
+    this.password = hash;
 
     // change the updated_at field to current date
     this.updated_at = currentDate;
