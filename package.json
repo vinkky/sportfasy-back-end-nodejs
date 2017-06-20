@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/vinkky/sportfasy-back-end-nodejs#readme",
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "mongoose": "^4.10.6",
