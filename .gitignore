@@ -64,4 +64,4 @@ typings/
 
 .gitignore
 .idea/
-package.json
+node_modules/
