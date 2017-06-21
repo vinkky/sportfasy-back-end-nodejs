@@ -1,4 +1,4 @@
-module.exports = function (router, User) {
+module.exports = function (router, User, bcrypt) {
     router.route('/users')
         .post(function (req, res) {
 
@@ -37,7 +37,7 @@ module.exports = function (router, User) {
     router.route('/users/:email')
     // get user by email (accessed at GET http://localhost:3000/api/users/:email)
         .get(function (req, res) {
-            User.find({ email: req.params.email}, function (err, user) {
+            User.find({email: req.params.email}, function (err, user) {
                 if (err) {
                     console.log('ERROR GETTING USER: ');
                     res.status(500).json({error: err});
@@ -50,7 +50,7 @@ module.exports = function (router, User) {
 
     router.route('/users/registration')
         .post(function (req, res) {
-            User.findOne({ email: req.body.email}, function (err,user) {
+            User.findOne({email: req.body.email}, function (err, user) {
                 if (!user) {
                     let user = new User({
                         name: req.body.name,
@@ -67,13 +67,41 @@ module.exports = function (router, User) {
                             res.status(500).json({error: err});
                         } else {
                             console.log('SUCCESS CREATING USER: ' + user.name);
-                            res.status(200).json({message: 'User created!'});
+                            res.status(200).json({message: 'User created!', user});
                         }
                     });
                 } else {
                     console.log('User with this email eqists'.green);
                     // res.status(200).json(user);
-                    res.status(200).json({"message" : "User with this email eqists"});
+                    res.status(200).json({"message": "User with this email egists"});
+                }
+            });
+        });
+
+    router.route('/users/login')
+        .post(function (req, res) {
+            let response = res;
+            User.findOne({email: req.body.email}, function (err, user) {
+                if (user) {
+                    bcrypt.compare(req.body.password, user.password, function (err, res) {
+                        if (err) {
+                            console.log('ERROR TO LOGN: ' + err);
+                            response.status(500).json({error: err});
+                        } else {
+                            if (res) {
+                                console.log('SUCCESS TO LOGIN ' + user.name);
+                                response.status(200).json({message: 'SUCCESS TO LOGIN', user});
+                            } else {
+                                console.log('FAIL TO LOGIN ' + user.name);
+                                response.status(401).json({message: 'FAIL TO LOGIN', user});
+                            }
+                        }
+                    });
+
+                } else {
+                    console.log('User with this email not egists'.green);
+                    // res.status(200).json(user);
+                    res.status(200).json({"message": "User with this email eqists"});
                 }
             });
         });
