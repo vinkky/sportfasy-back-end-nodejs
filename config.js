@@ -7,8 +7,9 @@ module.exports = {
         '/authenticate',
         '/authenticate/',
         '/login',
-        '/api/login',
-        'api/users/registration',
+        '/api/login/',
+        '/api/users/registration',
+        'api/users/',
         '/api',
         '/'
     ]
