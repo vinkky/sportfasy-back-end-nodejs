@@ -35,7 +35,42 @@ app.set('superSecret', config.secret);
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
+
+    // check header or url parameters or post parameters for token
+    let token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+    console.log(config.allowedUrls.indexOf(req.url), req.url);
+
+    if (token) {
+
+        jwt.verify(token, app.get('superSecret'), function (err, decoded) {
+            if (err) {
+                return res.status(403).send({
+                    success: false,
+                    message: 'Failed to authenticate token.',
+                    error: err
+                });
+            } else {
+                // if everything is good, save to request for use in other routes
+                req.decoded = decoded;
+                next();
+            }
+        });
+
+    } else if (config.allowedUrls.indexOf(req.url) === -1) {
+
+        // if there is no token
+        // return an error
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+
+    } else {
+
+        //if there is no token but api path is allowed through config
+        next();
+    }
 });
 
 app.listen(3000, function () {
@@ -49,8 +84,7 @@ app.use('/api', router);
 // ======================================================
 
 
-require('./rest/users.rest.js')(router, User , bcrypt);
-
+require('./rest/users.rest.js')(router, User, bcrypt);
 
 
 router.route('/login')
