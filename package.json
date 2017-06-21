@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "node index.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
+    "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.10.6",
     "nodemon": "^1.11.0"
   }

@@ -78,31 +78,5 @@ module.exports = function (router, User, bcrypt) {
             });
         });
 
-    router.route('/users/login')
-        .post(function (req, res) {
-            let response = res;
-            User.findOne({email: req.body.email}, function (err, user) {
-                if (user) {
-                    bcrypt.compare(req.body.password, user.password, function (err, res) {
-                        if (err) {
-                            console.log('ERROR TO LOGN: ' + err);
-                            response.status(500).json({error: err});
-                        } else {
-                            if (res) {
-                                console.log('SUCCESS TO LOGIN ' + user.name);
-                                response.status(200).json({message: 'SUCCESS TO LOGIN', user});
-                            } else {
-                                console.log('FAIL TO LOGIN ' + user.name);
-                                response.status(401).json({message: 'FAIL TO LOGIN', user});
-                            }
-                        }
-                    });
 
-                } else {
-                    console.log('User with this email not egists'.green);
-                    // res.status(200).json(user);
-                    res.status(200).json({"message": "User with this email eqists"});
-                }
-            });
-        });
 };
