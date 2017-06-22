@@ -34,9 +34,16 @@ app.set('superSecret', config.secret);
 // allow cross domain connection
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,POST,PUT");
+    res.header("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept,Authorization');
 
+    if(req.method === 'OPTIONS'){
+        res.status(200);
+        res.end;
+    }
     // check header or url parameters or post parameters for token
+
     let token = req.body.token || req.query.token || req.headers['x-access-token'];
 
     console.log(config.allowedUrls.indexOf(req.url), req.url);
