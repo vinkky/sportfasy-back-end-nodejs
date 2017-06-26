@@ -9,6 +9,10 @@ module.exports = {
         '/login',
         '/api/login',
         '/api/users/registration',
+        '/api/teams/create',
+        '/teams/:teamName',
+        '/api/teams',
+        '/creatteam',
         '/api',
         '/'
     ]

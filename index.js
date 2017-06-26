@@ -134,37 +134,6 @@ router.route('/login')
         });
     });
 
-require('./rest/teams.rest.rest.js')(router, Team);
+require('./rest/teams.rest.js')(router, Team);
 
 
-router.route('/creatteam')
-    .post(function (req, res) {
-        let response = res;
-        User.findOne({teamName: req.team.teamName}, function (err, team) {
-            if (team) {
-                if (err) {
-                    console.log('ERROR TO CREATE TEAM: ' + err);
-                    response.status(500).json({error: err});
-                } else {
-                    if (res) {
-                        console.log('SUCCESS TO CREATE TEAM ' + team.teamName);
-
-                        response.status(200).json({
-                            success: true,
-                            message: 'Team prep is set!',
-                            teamID: team._id,
-                            teamNames: team.teamName
-                        });
-                    } else {
-                        console.log('FAIL TO CREATE ' + team.teamName);
-                        response.status(401).json({message: 'FAIL TO CREATE', team});
-                    }
-                }
-
-            } else {
-                console.log('Team with this name not egists'.green);
-                // res.status(200).json(team);
-                res.status(200).json({"message": "Team with this name eqists"});
-            }
-        });
-    });

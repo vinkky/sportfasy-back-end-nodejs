@@ -5,7 +5,7 @@ module.exports = function (router, Team) {
             let team = new Team({
                 players: req.body.players,
                 master: req.body.master,
-                teamName: req.body.master,
+                team_name: req.body.team_name,
                 created_at: req.body.created_at,
                 updated_at: req.body.updated_at
             });
@@ -16,7 +16,7 @@ module.exports = function (router, Team) {
                     console.log('ERROR CREATING TEAM: ' + err);
                     res.status(500).json({error: err});
                 } else {
-                    console.log('SUCCESS CREATING Team: ' + team.teamName);
+                    console.log('SUCCESS CREATING Team: ' + team.team_name);
                     res.status(200).json({message: 'Team created!'});
                 }
             });
@@ -36,12 +36,12 @@ module.exports = function (router, Team) {
     router.route('/teams/:teamName')
     // get team by teamName (accessed at GET http://localhost:3000/api/teams/:teamName)
         .get(function (req, res) {
-            Team.find({teamName: req.params.teamName}, function (err, team) {
+            Team.find({team_name: req.params.team_name}, function (err, team) {
                 if (err) {
                     console.log('ERROR GETTING TEAM: ');
                     res.status(500).json({error: err});
                 } else {
-                    console.log('SUCCESS GETTING TEAM'.green + (' teamName:' + req.params.teamName));
+                    console.log('SUCCESS GETTING TEAM'.green + (' teamName:' + req.params.team_name));
                     res.status(200).json(team);
                 }
             });
@@ -49,12 +49,12 @@ module.exports = function (router, Team) {
 
     router.route('/teams/create')
         .post(function (req, res) {
-            User.findOne({teamName: req.body.teamName}, function (err, team) {
+            Team.findOne({team_name: req.body.team_name}, function (err, team) {
                 if (!team) {
                     let team = new Team({
                         players: req.body.players,
                         master: req.body.master,
-                        teamName: req.body.master,
+                        team_name: req.body.team_name,
                         created_at: req.body.created_at,
                         updated_at: req.body.updated_at
                     });
@@ -64,7 +64,7 @@ module.exports = function (router, Team) {
                             console.log('ERROR CREATING TEAM: ' + err);
                             res.status(500).json({error: err});
                         } else {
-                            console.log('SUCCESS CREATING TEAM: ' + team.teamName);
+                            console.log('SUCCESS CREATING TEAM: ' + team.team_name);
                             res.status(200).json({message: 'Team created!', team});
                         }
                     });

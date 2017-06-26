@@ -6,13 +6,13 @@ const saltRounds = 10;
 let teamSchema = new Schema({
     players: {type: String, required: true,},
     master: {type: String, required: true,},
-    teamName: {type: String, required: true, unique: true},
+    team_name: {type: String, required: true, unique: true},
     created_at: Date,
     updated_at: Date
 });
 
 // on every save, add the date
-userSchema.pre('save', function (next) {
+teamSchema.pre('save', function (next) {
     // get the current date
     let currentDate = new Date();
 
@@ -26,7 +26,7 @@ userSchema.pre('save', function (next) {
     next();
 });
 
-//create model for user
+//create model for team
 let Team = mongoose.model('Team', teamSchema);
 
 // export model
