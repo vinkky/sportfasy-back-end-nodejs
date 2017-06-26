@@ -1,4 +1,4 @@
-module.exports = function (router, Team, bcrypt) {
+module.exports = function (router, Team {
     router.route('/teams')
         .post(function (req, res) {
 
