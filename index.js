@@ -6,6 +6,10 @@ let User = require('./models/users');
 let config = require('./config');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
+let cors = require('cors');
+
+// allow cross domain connection
+app.use(cors());
 
 // ======
 // MONGO DB
@@ -30,23 +34,11 @@ app.use(bodyParser.json());
 // set token secret
 app.set('superSecret', config.secret);
 
-
-// allow cross domain connection
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,POST,PUT");
-    res.header("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept,Authorization');
 
-    if(req.method === 'OPTIONS'){
-        res.status(200);
-        res.end;
-    }
     // check header or url parameters or post parameters for token
 
     let token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-    console.log(config.allowedUrls.indexOf(req.url), req.url);
 
     if (token) {
 
@@ -127,7 +119,6 @@ router.route('/login')
 
             } else {
                 console.log('User with this email not egists'.green);
-                // res.status(200).json(user);
                 res.status(200).json({"message": "User with this email eqists"});
             }
         });
