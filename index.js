@@ -93,7 +93,7 @@ app.use('/api', router);
 
 
 require('./rest/users.rest.js')(router, User, bcrypt);
-
+require('./rest/teams.rest.js')(router, Team);
 
 router.route('/login')
     .post(function (req, res) {
@@ -134,6 +134,6 @@ router.route('/login')
         });
     });
 
-require('./rest/teams.rest.js')(router, Team);
+
 
 

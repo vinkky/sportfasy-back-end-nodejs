@@ -1,12 +1,11 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
-let bcrypt = require('bcrypt');
-const saltRounds = 10;
+
 
 let teamSchema = new Schema({
-    players: {type: String, required: true,},
-    master: {type: String, required: true,},
-    team_name: {type: String, required: true, unique: true},
+    name: {type: String, required: true, unique: true},
+    master: {type: String, required: true},
+    players: {type: String, required: true},
     created_at: Date,
     updated_at: Date
 });
@@ -26,10 +25,8 @@ teamSchema.pre('save', function (next) {
     next();
 });
 
-//create model for team
+//create model for tournament
 let Team = mongoose.model('Team', teamSchema);
 
 // export model
-module.exports = Team;/**
- * Created by zaidiminis on 6/26/17.
- */
+module.exports = Team;
