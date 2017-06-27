@@ -3,7 +3,11 @@ let express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
 let User = require('./models/users');
+<<<<<<< HEAD
 let Tournament =require('./models/tournaments');
+=======
+let Team = require('./models/teams');
+>>>>>>> backend-create-team-crud
 let config = require('./config');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
@@ -87,6 +91,8 @@ require('./rest/tournament.rest.js')(router, Tournament);
 
 require('./rest/users.rest.js')(router, User, bcrypt);
 
+require('./rest/teams.rest.js')(router, Team);
+
 router.route('/login')
     .post(function (req, res) {
         let response = res;
@@ -123,5 +129,14 @@ router.route('/login')
                 res.status(401).json({"message": "User with this email eqists"});
 
             }
+<<<<<<< HEAD
         })
 });
+=======
+        });
+    });
+
+
+
+
+>>>>>>> backend-create-team-crud

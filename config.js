@@ -12,6 +12,9 @@ module.exports = {
         '/api/tournaments',
         '/api/tournaments/delete',
         '/api/tournaments/update',
+        '/api/teams',
+        '/api/teams/delete',
+        '/api/teams/update',
         '/api',
         '/'
     ]
