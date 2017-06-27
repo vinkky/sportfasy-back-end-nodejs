@@ -1,7 +1,6 @@
 let http = require('http');
 let express = require('express');
 let app = express();
-var cors = require('cors');
 let bodyParser = require('body-parser');
 let User = require('./models/users');
 let Tournament =require('./models/tournaments');
@@ -23,7 +22,6 @@ mongoose.connect(config.database);
 
 let router = express.Router();
 
-app.use(cors());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}));
 

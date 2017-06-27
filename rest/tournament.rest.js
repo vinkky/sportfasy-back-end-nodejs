@@ -1,8 +1,7 @@
 module.exports = function (router, Tournament) {
     router.route('/tournaments')
         .post(function (req, res) {
-
-            let tournament = new Tournament({
+           let tournament = new Tournament({
                 name: req.body.name,
                 start: req.body.start,
                 end: req.body.end,
@@ -35,16 +34,15 @@ module.exports = function (router, Tournament) {
                     res.status(200).json(tournament);
                 }
             });
-        })
-        //Update tournament
+        });
+    //Update tournament
     router.route('/tournaments/update')
         .put(function (req, res) {
-
-            // update user name
-            Tournament.find(req.body.name, function (err, tournament) {
+            // update tournament by name
+            Tournament.findOne({name: req.body.name}, function (err, tournament) {
 
                 if (err) {
-                    console.log('ERROR UPDATING USER: ' + err.errmsg);
+                    console.log('ERROR UPDATING TOURNAMENT: ' + err.errmsg);
                     res.status(500).json({error: err});
                     return 0;
                 }
@@ -65,7 +63,7 @@ module.exports = function (router, Tournament) {
                 });
 
             });
-        })
+        });
         //Delete tournament
     router.route('/tournaments/delete')
         .delete(function (req, res) {
@@ -76,7 +74,7 @@ module.exports = function (router, Tournament) {
                         console.log('ERROR DELETING TOURNAMENT: ' + err.errmsg);
                         res.status(500).json({error: err});
                     } else {
-                        console.log('SUCCESS DELETING TOURNAMENT'.green + (' name: ' + req.body.name));
+                        console.log('SUCCESS DELETING TOURNAMENT'+ (' name: ' + req.body.name));
                         res.status(200).json({message: 'Successfully deleted tournament: ' +req.body.name});
                     }
                 });
