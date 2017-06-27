@@ -1,8 +1,10 @@
 let http = require('http');
 let express = require('express');
 let app = express();
+var cors = require('cors');
 let bodyParser = require('body-parser');
 let User = require('./models/users');
+let Tournament =require('./models/tournaments');
 let config = require('./config');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
@@ -21,6 +23,7 @@ mongoose.connect(config.database);
 
 let router = express.Router();
 
+app.use(cors());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -38,7 +41,9 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Methods", "GET,HEAD,POST,PUT");
     res.header("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept,Authorization');
 
-    if(req.method === 'OPTIONS'){
+
+
+if(req.method === 'OPTIONS'){
         res.status(200);
         res.end;
     }
@@ -90,9 +95,9 @@ app.listen(3000, function () {
 app.use('/api', router);
 // ======================================================
 
+require('./rest/tournament.rest.js')(router, Tournament);
 
 require('./rest/users.rest.js')(router, User, bcrypt);
-
 
 router.route('/login')
     .post(function (req, res) {
@@ -101,7 +106,7 @@ router.route('/login')
             if (user) {
                 bcrypt.compare(req.body.password, user.password, function (err, res) {
                     if (err) {
-                        console.log('ERROR TO LOGN: ' + err);
+                        console.log('ERROR TO LOGIN: ' + err);
                         response.status(500).json({error: err});
                     } else {
                         if (res) {
@@ -126,9 +131,9 @@ router.route('/login')
                 });
 
             } else {
-                console.log('User with this email not egists'.green);
+                console.log('User with this email not exists'.green);
                 // res.status(200).json(user);
-                res.status(200).json({"message": "User with this email eqists"});
+                res.status(200).json({"message": "User with this email exists"});
             }
-        });
-    });
+        })
+});
