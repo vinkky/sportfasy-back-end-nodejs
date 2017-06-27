@@ -72,7 +72,6 @@ module.exports = function (router, User, bcrypt) {
                     });
                 } else {
                     console.log('User with this email eqists'.green);
-                    // res.status(200).json(user);
                     res.status(409).json({"message": "User with this email egists"});
                 }
             });
