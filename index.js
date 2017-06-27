@@ -3,6 +3,7 @@ let express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
 let User = require('./models/users');
+let Tournament =require('./models/tournaments');
 let config = require('./config');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
@@ -82,9 +83,9 @@ app.listen(3000, function () {
 app.use('/api', router);
 // ======================================================
 
+require('./rest/tournament.rest.js')(router, Tournament);
 
 require('./rest/users.rest.js')(router, User, bcrypt);
-
 
 router.route('/login')
     .post(function (req, res) {
@@ -93,7 +94,7 @@ router.route('/login')
             if (user) {
                 bcrypt.compare(req.body.password, user.password, function (err, res) {
                     if (err) {
-                        console.log('ERROR TO LOGN: ' + err);
+                        console.log('ERROR TO LOGIN: ' + err);
                         response.status(500).json({error: err});
                     } else {
                         if (res) {
@@ -120,6 +121,7 @@ router.route('/login')
             } else {
                 console.log('User with this email not egists'.green);
                 res.status(401).json({"message": "User with this email eqists"});
+
             }
-        });
-    });
+        })
+});
