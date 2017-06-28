@@ -10,11 +10,8 @@ module.exports = {
         '/api/login',
         '/api/users/registration',
         '/api/tournaments',
-        '/api/tournaments/delete',
-        '/api/tournaments/update',
         '/api/teams',
-        '/api/teams/delete',
-        '/api/teams/update',
+        //'/api/teams/zalgiris', // get by one for testing purpose
         '/api',
         '/'
     ]

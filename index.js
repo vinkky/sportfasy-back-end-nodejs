@@ -3,7 +3,7 @@ let express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
 let User = require('./models/users');
-let Tournament =require('./models/tournaments');
+let Tournament = require('./models/tournaments');
 let Team = require('./models/teams');
 let config = require('./config');
 let bcrypt = require('bcrypt');
@@ -127,6 +127,6 @@ router.route('/login')
 
             }
         })
-        });
+    });
 
 

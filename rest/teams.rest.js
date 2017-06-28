@@ -1,22 +1,28 @@
 module.exports = function (router, Team) {
     router.route('/teams')
         .post(function (req, res) {
-            let team = new Team({
-                name: req.body.name,
-                master: req.body.master,
-                players: req.body.players,
-                created_at: req.body.created_at,
-                updated_at: req.body.updated_at
-            });
-
-            // save the team and check for errors
-            team.save(function (err) {
-                if (err) {
-                    console.log('ERROR CREATING TEAM: ' + err);
-                    res.status(500).json({error: err});
+            Team.findOne({name: req.body.name}, function (err, team) {
+                if (!team) {
+                    let team = new Team({
+                        name: req.body.name,
+                        master: req.body.master,
+                        players: req.body.players,
+                        created_at: req.body.created_at,
+                        updated_at: req.body.updated_at
+                    });
+                    // save the team and check for errors
+                    team.save(function (err) {
+                        if (err) {
+                            console.log('ERROR CREATING TEAM: ' + err);
+                            res.status(500).json({error: err});
+                        } else {
+                            console.log('SUCCESS CREATING TEAM: ' + team.name);
+                            res.status(200).json({message: 'Team created!', team});
+                        }
+                    });
                 } else {
-                    console.log('SUCCESS CREATING TEAM: ' + team.name);
-                    res.status(200).json({message: 'Team created!'});
+                    console.log('Team with this name eqists'.green);
+                    res.status(409).json({"message": "Team with this name egists"});
                 }
             });
         })
@@ -31,9 +37,9 @@ module.exports = function (router, Team) {
                     res.status(200).json(team);
                 }
             });
-        });
-    //Update team
-    router.route('/teams/update')
+        })
+
+        //Update team
         .put(function (req, res) {
             // update team by name
             Team.findOne({name: req.body.name}, function (err, team) {
@@ -44,7 +50,7 @@ module.exports = function (router, Team) {
                     return 0;
                 }
 
-                for (var key in req.body) {
+                for (let key in req.body) {
                     team[key] = req.body[key];
                 }
 
@@ -60,20 +66,34 @@ module.exports = function (router, Team) {
                 });
 
             });
-        });
-    //Delete team
-    router.route('/teams/delete')
+        })
+        //Delete team
         .delete(function (req, res) {
             Team.remove(
-                {name: req.body.name
+                {
+                    name: req.body.name
                 }, function (err, team) {
                     if (err) {
                         console.log('ERROR DELETING TEAM: ' + err.errmsg);
                         res.status(500).json({error: err});
                     } else {
-                        console.log('SUCCESS DELETING TEAM'+ (' name: ' + req.body.name));
-                        res.status(200).json({message: 'Successfully deleted team: ' +req.body.name});
+                        console.log('SUCCESS DELETING TEAM' + (' name: ' + req.body.name));
+                        res.status(200).json({message: 'Successfully deleted team: ' + req.body.name});
                     }
                 });
-        })
+        });
+
+        router.route('/teams/:name')
+        // get team by name (accessed at GET http://localhost:3000/api/teams/:name)
+     .get(function (req, res) {
+            Team.find({name: req.params.name}, function (err, team) {
+                if (err) {
+                    console.log('ERROR GETTING TEAM: ');
+                    res.status(500).json({error: err});
+                } else {
+                    console.log('SUCCESS GETTING TEAM'.green + (' name:' + req.params.name));
+                    res.status(200).json(team);
+                }
+            });
+        });
 };
