@@ -83,9 +83,9 @@ module.exports = function (router, Team) {
                 });
         });
 
-        router.route('/teams/:name')
+    router.route('/teams/:name')
         // get team by name (accessed at GET http://localhost:3000/api/teams/:name)
-     .get(function (req, res) {
+        .get(function (req, res) {
             Team.find({name: req.params.name}, function (err, team) {
                 if (err) {
                     console.log('ERROR GETTING TEAM: ');
