@@ -1,3 +1,7 @@
+let mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
+
 module.exports = function (router, User) {
     router.route('/users/registration')
     // add new user

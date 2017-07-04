@@ -10,6 +10,7 @@ module.exports = {
         '/api/login',
         '/api/users/registration',
         '/api',
+        '/api/teams',
         '/'
     ]
 };

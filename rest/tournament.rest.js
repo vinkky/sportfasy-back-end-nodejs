@@ -21,7 +21,7 @@ module.exports = function (router, Tournament) {
                             res.status(500).json({error: err});
                         } else {
                             console.log('SUCCESS CREATING TOURNAMENT: ' + tournament.name);
-                            res.status(200).json({message: 'Team created!', tournament});
+                            res.status(200).json({message: 'Tournament created!', tournament});
                         }
                     });
                 } else {

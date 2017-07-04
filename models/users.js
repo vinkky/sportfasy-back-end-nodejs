@@ -2,6 +2,7 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let bcrypt = require('bcrypt');
 const saltRounds = 10;
+let Team = require('../models/teams');
 
 let userSchema = new Schema({
     name: {type: String, required: true,},

@@ -1,14 +1,40 @@
+let mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+let User = require('../models/users');
+
+let user_new = new User();
+
+
 module.exports = function (router, Team) {
     router.route('/teams')
         .post(function (req, res) {
             Team.findOne({name: req.body.name}, function (err, team) {
                 if (!team) {
+                    //finding user
+                    User.findOne({email: req.body.master}, function(err,obj) { user_new = obj; console.log(obj); });
+                    //console.log("USER NEW: " + user_new.name);
+                    // user_new.save();
+
+
                     let team = new Team({
                         name: req.body.name,
                         master: req.body.master,
                         players: req.body.players,
                         created_at: req.body.created_at,
-                        updated_at: req.body.updated_at
+                        updated_at: req.body.updated_at,
+                        creator: {
+                            name: user_new.name,
+                            user: user_new._id
+                        }
+                    });
+                    //populate team
+                    team.save(function(error) {
+                        if (!error) {
+                            Team.find({})
+                                .populate('creator.user')
+                                .exec(function(error, team) {
+                                })
+                        }
                     });
                     // save the team and check for errors
                     team.save(function (err) {
@@ -97,3 +123,4 @@ module.exports = function (router, Team) {
             });
         });
 };
+

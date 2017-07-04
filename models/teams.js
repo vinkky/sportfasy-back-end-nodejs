@@ -1,13 +1,21 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
-
+let User = require('../models/users');
+let Tournament = require('../models/tournaments');
 
 let teamSchema = new Schema({
     name: {type: String, required: true, unique: true},
     master: {type: String, required: true},
     players: {type: String, required: true},
     created_at: Date,
-    updated_at: Date
+    updated_at: Date,
+    creator: {
+        name: String,
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    }
 });
 
 // on every save, add the date
