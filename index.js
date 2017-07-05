@@ -111,6 +111,11 @@ router.route('/login')
                                 success: true,
                                 message: 'Token is set!',
                                 token: token,
+                                user: {
+                                    userID: user._id,
+                                    userEmail: user.email,
+                                    userName: user.name
+                                },
                                 userID: user._id,
                                 userEmail: user.email
                             });
