@@ -2,20 +2,21 @@ let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 let User = require('../models/users');
 
-let user_new = new User();
 
 
 module.exports = function (router, Team) {
     router.route('/teams')
         .post(function (req, res) {
+            let user_new = new User();
+            //finding user
+            User.findOne({email: req.body.master}, function(err,obj) { user_new = obj; console.log(obj); });
+            //console.log("USER NEW: " + user_new.name);
+            user_new.save();
+
+            
             Team.findOne({name: req.body.name}, function (err, team) {
+
                 if (!team) {
-                    //finding user
-                    User.findOne({email: req.body.master}, function(err,obj) { user_new = obj; console.log(obj); });
-                    //console.log("USER NEW: " + user_new.name);
-                    // user_new.save();
-
-
                     let team = new Team({
                         name: req.body.name,
                         master: req.body.master,
@@ -27,21 +28,16 @@ module.exports = function (router, Team) {
                             user: user_new._id
                         }
                     });
-                    //populate team
-                    team.save(function(error) {
-                        if (!error) {
-                            Team.find({})
-                                .populate('creator.user')
-                                .exec(function(error, team) {
-                                })
-                        }
-                    });
+
                     // save the team and check for errors
                     team.save(function (err) {
                         if (err) {
                             console.log('ERROR CREATING TEAM: ' + err);
                             res.status(500).json({error: err});
                         } else {
+                            //populate team
+                            Team.find({}).populate('creator.user').exec(function(error, team) {});
+
                             console.log('SUCCESS CREATING TEAM: ' + team.name);
                             res.status(200).json({message: 'Team created!', team});
                         }
