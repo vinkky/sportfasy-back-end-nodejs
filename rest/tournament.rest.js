@@ -10,7 +10,8 @@ module.exports = function (router, Tournament, User) {
                         end: req.body.end,
                         max_teams: req.body.max_teams,
                         max_players: req.body.max_players,
-                        _players: req.body._players,
+                        _teams: req.body.teams,
+                        _players: req.body.players,
                         budget: req.body.budget,
                         created_at: req.body.created_at,
                         updated_at: req.body.updated_at
@@ -33,7 +34,7 @@ module.exports = function (router, Tournament, User) {
         })
         // get all tournaments
         .get(function (req, res) {
-            Tournament.findOne({name:'tournament5'}).populate('_players').exec(function (err, tournament) {
+            Tournament.find().populate('_players','_teams').exec(function (err, tournament) {
                 if (err) {
                     console.log('ERROR GETTING TOURNAMENTS: ');
                     res.status(500).json({error: err});
