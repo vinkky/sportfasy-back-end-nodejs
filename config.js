@@ -9,6 +9,8 @@ module.exports = {
         '/login',
         '/api/login',
         '/api/users/registration',
+        '/api/tournaments',
+        '/api/teams',
         '/api',
         '/'
     ]

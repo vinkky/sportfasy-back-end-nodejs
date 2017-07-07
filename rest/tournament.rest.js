@@ -1,4 +1,4 @@
-module.exports = function (router, Tournament) {
+module.exports = function (router, Tournament, User) {
     router.route('/tournaments')
         // add new tournament
         .post(function (req, res) {
@@ -8,8 +8,9 @@ module.exports = function (router, Tournament) {
                         name: req.body.name,
                         start: req.body.start,
                         end: req.body.end,
-                        teams: req.body.teams,
-                        players: req.body.players,
+                        max_teams: req.body.max_teams,
+                        max_players: req.body.max_players,
+                        _players: req.body._players,
                         budget: req.body.budget,
                         created_at: req.body.created_at,
                         updated_at: req.body.updated_at
@@ -21,7 +22,7 @@ module.exports = function (router, Tournament) {
                             res.status(500).json({error: err});
                         } else {
                             console.log('SUCCESS CREATING TOURNAMENT: ' + tournament.name);
-                            res.status(200).json({message: 'Team created!', tournament});
+                            res.status(200).json({message: 'Tournament created!', tournament});
                         }
                     });
                 } else {
@@ -32,7 +33,7 @@ module.exports = function (router, Tournament) {
         })
         // get all tournaments
         .get(function (req, res) {
-            Tournament.find(function (err, tournament) {
+            Tournament.findOne({name:'tournament5'}).populate('_players').exec(function (err, tournament) {
                 if (err) {
                     console.log('ERROR GETTING TOURNAMENTS: ');
                     res.status(500).json({error: err});

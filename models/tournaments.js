@@ -1,13 +1,17 @@
+
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
-
+// let User = mongoose.model('User');
+let User = require('./users');
 
 let tournamentSchema = new Schema({
     name: {type: String, required: true, unique: true},
     start: {type: Date, required: true},
     end: {type: Date, required: true},
-    teams: {type: Number, required: true},
-    players: {type: Number, required: true},
+    max_teams: {type: Number, required: true},
+    teams: {type: Array},
+    max_players: {type: Number, required: true},
+    _players: [{type: [Schema.ObjectId], ref: 'User'}],
     budget: {type: Number, required: true},
     created_at: Date,
     updated_at: Date

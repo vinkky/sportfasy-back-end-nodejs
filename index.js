@@ -84,7 +84,7 @@ app.listen(3000, function () {
 app.use('/api', router);
 // ======================================================
 
-require('./rest/tournament.rest.js')(router, Tournament);
+require('./rest/tournament.rest.js')(router, Tournament,User);
 
 require('./rest/users.rest.js')(router, User, bcrypt);
 
