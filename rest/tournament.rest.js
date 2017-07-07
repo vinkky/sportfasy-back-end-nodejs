@@ -11,7 +11,7 @@ module.exports = function (router, Tournament, User) {
                         max_teams: req.body.max_teams,
                         max_players: req.body.max_players,
                         _teams: req.body.teams,
-                        _players: req.body.players,
+                        _users: req.body.users,
                         budget: req.body.budget,
                         created_at: req.body.created_at,
                         updated_at: req.body.updated_at
@@ -34,7 +34,7 @@ module.exports = function (router, Tournament, User) {
         })
         // get all tournaments
         .get(function (req, res) {
-            Tournament.find().populate('_players','_teams').exec(function (err, tournament) {
+            Tournament.find().populate('_users').populate('_teams').exec(function (err, tournament) {
                 if (err) {
                     console.log('ERROR GETTING TOURNAMENTS: ');
                     res.status(500).json({error: err});
