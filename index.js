@@ -74,7 +74,7 @@ app.use(function (req, res, next) {
     }
 });
 
-app.listen(8894, function () {
+app.listen(3000, function () {
     console.log('App listening on port 3000');
 });
 
@@ -111,11 +111,6 @@ router.route('/login')
                                 success: true,
                                 message: 'Token is set!',
                                 token: token,
-                                //user: {
-                                    //userID: user._id,
-                                    //userEmail: user.email,
-                                    //userName: user.name
-                                //},
                                 userID: user._id,
                                 userEmail: user.email,
                                 userName: user.name
