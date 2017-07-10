@@ -1,5 +1,5 @@
 module.exports = function (router, Tournament, User) {
-    router.route('/tournaments')
+    router.route('/tournaments/:userID?')
         // add new tournament
         .post(function (req, res) {
             Tournament.findOne({name: req.body.name}, function (err, tournament) {
@@ -32,17 +32,30 @@ module.exports = function (router, Tournament, User) {
                 }
             });
         })
-        // get all tournaments
         .get(function (req, res) {
-            Tournament.find().populate('_users').populate('_teams').exec(function (err, tournament) {
-                if (err) {
-                    console.log('ERROR GETTING TOURNAMENTS: ');
-                    res.status(500).json({error: err});
-                } else {
-                    console.log('SUCCESS GETTING TOURNAMENTS');
-                    res.status(200).json(tournament);
-                }
-            });
+            // get all tournaments for particular user
+            if (req.query.userID) {
+                Tournament.find({_users: {_id: req.query.userID}}).exec(function (err, tournament) {
+                    if (err) {
+                        console.log('ERROR GETTING TOURNAMENT: ');
+                        res.status(500).json({error: err});
+                    } else {
+                        console.log('SUCCESS GETTING TOURNAMENT'.green + (' name:' + req.params.name));
+                        res.status(200).json(tournament);
+                    }
+                });
+            } else {
+                // get all tournaments
+                Tournament.find().populate('_users').populate('_teams').exec(function (err, tournament) {
+                    if (err) {
+                        console.log('ERROR GETTING TOURNAMENTS: ');
+                        res.status(500).json({error: err});
+                    } else {
+                        console.log('SUCCESS GETTING TOURNAMENTS');
+                        res.status(200).json(tournament);
+                    }
+                });
+            }
         })
         // update tournament
         .put(function (req, res) {
@@ -71,28 +84,16 @@ module.exports = function (router, Tournament, User) {
         // delete tournament
         .delete(function (req, res) {
             Tournament.remove(
-                {name: req.body.name
+                {
+                    name: req.body.name
                 }, function (err, tournament) {
                     if (err) {
                         console.log('ERROR DELETING TOURNAMENT: ' + err.errmsg);
                         res.status(500).json({error: err});
                     } else {
-                        console.log('SUCCESS DELETING TOURNAMENT'+ (' name: ' + req.body.name));
-                        res.status(200).json({message: 'Successfully deleted tournament: ' +req.body.name});
+                        console.log('SUCCESS DELETING TOURNAMENT' + (' name: ' + req.body.name));
+                        res.status(200).json({message: 'Successfully deleted tournament: ' + req.body.name});
                     }
                 });
-        });
-    router.route('/tournaments/:name')
-    // get tournament by name (accessed at GET http://localhost:3000/api/tournaments/:name)
-        .get(function (req, res) {
-            Team.find({name: req.params.name}, function (err, team) {
-                if (err) {
-                    console.log('ERROR GETTING TOURNAMENT: ');
-                    res.status(500).json({error: err});
-                } else {
-                    console.log('SUCCESS GETTING TOURNAMENT'.green + (' name:' + req.params.name));
-                    res.status(200).json(team);
-                }
-            });
         });
 };

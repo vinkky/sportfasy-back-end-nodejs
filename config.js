@@ -9,7 +9,8 @@ module.exports = {
         '/login',
         '/api/login',
         '/api/users/registration',
-        '/api/tournaments',
+        '/api/tournaments/',
+        '/api/tournaments/:userID?',
         '/api/teams',
         '/api',
         '/'
