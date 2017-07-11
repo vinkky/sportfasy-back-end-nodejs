@@ -112,7 +112,8 @@ router.route('/login')
                                 message: 'Token is set!',
                                 token: token,
                                 userID: user._id,
-                                userEmail: user.email
+                                userEmail: user.email,
+                                userName: user.name
                             });
                         } else {
                             console.log('FAIL TO LOGIN ' + user.name);
