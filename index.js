@@ -113,7 +113,8 @@ router.route('/login')
                                 token: token,
                                 userID: user._id,
                                 userEmail: user.email,
-                                userName: user.name
+                                userName: user.name,
+                                userSurname: user.surname
                             });
                         } else {
                             console.log('FAIL TO LOGIN ' + user.name);

@@ -8,7 +8,7 @@ let tournamentSchema = new Schema({
     start: {type: Date, required: true},
     end: {type: Date, required: true},
     max_teams: {type: Number, required: true},
-    _teams: [{type: [Schema.ObjtId], ref: 'Team'}],
+    _teams: [{type: [Schema.ObjectId], ref: 'Team'}],
     max_players: {type: Number, required: true},
     _users: [{type: [Schema.ObjectId], ref: 'User'}],
     budget: {type: Number, required: true},
