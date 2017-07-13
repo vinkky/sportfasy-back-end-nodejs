@@ -12,7 +12,7 @@ let tournamentSchema = new Schema({
     max_players: {type: Number, required: true},
     _users: [{type: [Schema.ObjectId], ref: 'User'}],
     budget: {type: Number, required: true},
-    tournament_master: {type: Schema.ObjectId},
+    tournament_master: {type: String, required: true},
     created_at: Date,
     updated_at: Date
 });
