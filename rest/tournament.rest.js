@@ -34,20 +34,10 @@ module.exports = function (router, Tournament, User) {
             });
         })
         .get(function (req, res) {
-            // get all tournaments for particular user
-            if (req.query.userID) {
-                Tournament.find({_users: {_id: req.query.userID}}).exec(function (err, tournament) {
-                    if (err) {
-                        console.log('ERROR GETTING TOURNAMENT: ');
-                        res.status(500).json({error: err});
-                    } else {
-                        console.log('SUCCESS GETTING TOURNAMENT'.green + (' name:' + req.params.name));
-                        res.status(200).json(tournament);
-                    }
-                });
-            } else {
+
+            let query = function(){if(req.query.userID){return {_users: {_id: req.query.userID}}}}();
                 // get all tournaments
-                Tournament.find().populate('_users').populate('_teams').exec(function (err, tournament) {
+                Tournament.find(query).populate('_users').populate('_teams').exec(function (err, tournament) {
                     if (err) {
                         console.log('ERROR GETTING TOURNAMENTS: ');
                         res.status(500).json({error: err});
@@ -56,7 +46,6 @@ module.exports = function (router, Tournament, User) {
                         res.status(200).json(tournament);
                     }
                 });
-            }
         })
         // update tournament
         .put(function (req, res) {
