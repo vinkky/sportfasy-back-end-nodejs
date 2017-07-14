@@ -13,7 +13,7 @@ module.exports = function (router, Tournament, User) {
                         _teams: req.body.teams,
                         _users: req.body.users,
                         budget: req.body.budget,
-                        _tournament_master: req.body.tournament_master,
+                        _tournament_master: req.body._tournament_master,
                         created_at: req.body.created_at,
                         updated_at: req.body.updated_at
                     });
