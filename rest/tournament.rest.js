@@ -13,7 +13,7 @@ module.exports = function (router, Tournament, User) {
                         _teams: req.body.teams,
                         _users: req.body.users,
                         budget: req.body.budget,
-                        tournament_master: req.body.tournament_master,
+                        _tournament_master: req.body._tournament_master,
                         created_at: req.body.created_at,
                         updated_at: req.body.updated_at
                     });
@@ -37,7 +37,7 @@ module.exports = function (router, Tournament, User) {
 
             let query = function(){if(req.query.userID){return {_users: {_id: req.query.userID}}}}();
                 // get all tournaments
-                Tournament.find(query).populate('_users').populate('_teams').exec(function (err, tournament) {
+                Tournament.find(query).populate('_users').populate('_teams').populate('_tournament_master').exec(function (err, tournament) {
                     if (err) {
                         console.log('ERROR GETTING TOURNAMENTS: ');
                         res.status(500).json({error: err});
