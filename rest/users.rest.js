@@ -1,6 +1,6 @@
-module.exports = function (router, User) {
-    router.route('/users/registration')
-    // add new user
+module.exports = function (router, User, jwt, superSecret) {
+    router.route('/users/:token?')
+        // add new user
         .post(function (req, res) {
             User.findOne({email: req.body.email}, function (err, user) {
                 if (!user) {
@@ -30,27 +30,16 @@ module.exports = function (router, User) {
         })
         // get all users
         .get(function (req, res) {
-            User.find(function (err, users) {
+            let token = req.body.token || req.query.token || req.headers['x-access-token'];
+            jwt.verify(token, superSecret, function (err, decoded) {
                 if (err) {
-                    console.log('ERROR GETTING USERS: ');
-                    res.status(500).json({error: err});
+                    return res.status(403).send({
+                        success: false,
+                        message: 'Failed to authenticate token.',
+                        error: err
+                    });
                 } else {
-                    console.log('SUCCESS GETTING USERS');
-                    res.status(200).json(users);
-                }
-            });
-        });
-
-    router.route('/users/:email')
-    // get user by email (accessed at GET http://localhost:3000/api/users/:email)
-        .get(function (req, res) {
-            User.find({email: req.params.email}, function (err, user) {
-                if (err) {
-                    console.log('ERROR GETTING USER: ');
-                    res.status(500).json({error: err});
-                } else {
-                    console.log('SUCCESS GETTING USER'.green + (' email:' + req.params.email));
-                    res.status(200).json(user);
+                    res.status(200).json(decoded._doc);
                 }
             });
         });

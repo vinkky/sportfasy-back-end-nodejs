@@ -86,7 +86,7 @@ app.use('/api', router);
 
 require('./rest/tournament.rest.js')(router, Tournament,User);
 
-require('./rest/users.rest.js')(router, User, bcrypt);
+require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 
 require('./rest/teams.rest.js')(router, Team);
 
