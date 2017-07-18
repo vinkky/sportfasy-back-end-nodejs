@@ -1,8 +1,8 @@
 
 var config = {
-    production: {
+    release: {
         secret: 'ileveninelevator',
-        database: 'mongodb://localhost/production_sportfasydatabase',
+        database: 'mongodb://localhost/release_sportfasydatabase',
         port: '3001',
         allowedUrls: [
             '/api/authenticate',
