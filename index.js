@@ -5,10 +5,11 @@ let bodyParser = require('body-parser');
 let User = require('./models/users');
 let Tournament = require('./models/tournaments');
 let Team = require('./models/teams');
-let config = require('./config');
+let allowedUrls = require('./allowedUrls');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 let cors = require('cors');
+let config = require('./config.js').get(process.env.NODE_ENV);
 
 // allow cross domain connection
 app.use(cors());
@@ -59,7 +60,6 @@ app.use(function (req, res, next) {
         });
 
     } else if (config.allowedUrls.indexOf(req.url) === -1) {
-
         // if there is no token
         // return an error
         return res.status(403).send({
@@ -74,8 +74,8 @@ app.use(function (req, res, next) {
     }
 });
 
-app.listen(3000, function () {
-    console.log('App listening on port 3000');
+app.listen(config.port, function () {
+    console.log(`App listening on port ${config.port}`);
 });
 
 
