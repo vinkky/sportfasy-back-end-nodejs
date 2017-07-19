@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build:clean": "rimraf ./build/*",
+    "prebuild": "npm install && npm run build:clean",
+    "build:dev": "browserify ./index.js --NODE_ENV dev -o ./build/bundle.js | uglifyjs -mc > ./build/bundle_beauty.js",
+    "build:dev_watch": "watchify ./index.js --NODE_ENV dev -o ./build/bundle.js  -v",
+    "build:release_watch": "watchify ./index.js --NODE_ENV release -o ./build/bundle.js  -v"
   },
   "repository": {
     "type": "git",
@@ -21,9 +26,15 @@
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
     "cors": "^2.8.3",
+    "envify": "^4.1.0",
     "express": "^4.15.3",
     "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.10.6",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "uglify-js": "^3.0.25"
+  },
+  "devDependencies": {
+    "grunt-browserify": "^5.0.0",
+    "watchify": "^3.9.0"
   }
 }

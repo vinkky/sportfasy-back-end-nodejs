@@ -1,7 +1,6 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
-
 let teamSchema = new Schema({
     name: {type: String, required: true, unique: true},
     master: {type: String, required: true},
