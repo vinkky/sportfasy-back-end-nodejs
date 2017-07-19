@@ -8,9 +8,10 @@
     "start": "node index.js",
     "prestart:dev": "npm install",
     "prestart:release": "npm install",
-    "start:dev": " forever start -w -v index.js cross-env NODE_ENV=dev",
-    "start:release": " forever start -w -v index.js cross-env NODE_ENV=release"
+    "start:dev": "NODE_ENV=dev forever start -w -v index.js cross-env",
+    "start:release": "NODE_ENV=release forever start -w -v index.js"
   },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vinkky/sportfasy-back-end-nodejs.git"
