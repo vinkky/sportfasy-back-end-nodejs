@@ -17,27 +17,27 @@ let playerSchema = new Schema({
 let Player = mongoose.model('Player', playerSchema);
 let url = 'http://ergast.com/api/f1/current/last/results.json';
 
-console.log('Collection is not empty: ' + Player.count());
+Player.count(function (err, count) {
+    if (!err && count === 0) {
+        fetch(url)
+            .then(res => res.json())
+            .then((out) => {
+                let info = out.MRData.RaceTable.Races[0].Results;
+                info.forEach((item) => {
+                    obj = new Object();
+                    obj.name = item.Driver.givenName;
+                    obj.surname = item.Driver.familyName;
+                    obj.age = item.Driver.dateOfBirth;
+                    obj.nationality = item.Driver.nationality;
+                    obj.real_team = item.Constructor.constructorId;
 
+                    Player.collection.insert(obj)
+                });
 
-    // fetch(url)
-    //     .then(res => res.json())
-    //     .then((out) => {
-    //         let info = out.MRData.RaceTable.Races[0].Results;
-    //         info.forEach((item) => {
-    //             obj = new Object();
-    //             obj.name = item.Driver.givenName;
-    //             obj.surname = item.Driver.familyName;
-    //             obj.age = item.Driver.dateOfBirth;
-    //             obj.nationality = item.Driver.nationality;
-    //             obj.real_team = item.Constructor.constructorId;
-    //
-    //             Player.collection.insert(obj)
-    //         });
-    //
-    //     })
-    //     .catch(err => console.error(err));
-
+            })
+            .catch(err => console.error(err));
+    }
+});
 
 // on every save, add the date
 playerSchema.pre('save', function (next) {
