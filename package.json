@@ -8,8 +8,8 @@
     "start": "node index.js",
     "prestart:dev": "npm install",
     "prestart:release": "npm install",
-    "start:dev": " forever start -w -v node index.js cross-env NODE_ENV=dev",
-    "start:release": " forever start -w -v node index.js cross-env NODE_ENV=release"
+    "start:dev": " forever start -w -v index.js cross-env NODE_ENV=dev",
+    "start:release": " forever start -w -v index.js cross-env NODE_ENV=release"
   },
   "repository": {
     "type": "git",
