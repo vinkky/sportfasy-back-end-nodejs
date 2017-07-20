@@ -5,7 +5,7 @@ let bodyParser = require('body-parser');
 let User = require('./models/users');
 let Tournament = require('./models/tournaments');
 let Team = require('./models/teams');
-let allowedUrls = require('./allowedUrls');
+let Player = require('./models/player');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 let cors = require('cors');
@@ -89,6 +89,8 @@ require('./rest/tournament.rest.js')(router, Tournament,User);
 require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 
 require('./rest/teams.rest.js')(router, Team);
+
+require('./rest/player.rest')(router, Player);
 
 router.route('/login')
     .post(function (req, res) {
