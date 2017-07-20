@@ -39,6 +39,3 @@ Player.count(function (err, count) {
             .catch(err => console.error(err));
     }
 });
-
-// export model
-module.exports = Player;
