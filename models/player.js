@@ -1,6 +1,7 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let fetch = require('node-fetch');
+let cron = require('cron');
 
 let playerSchema = new Schema({
     name: {type: String},
@@ -39,3 +40,21 @@ Player.count(function (err, count) {
             .catch(err => console.error(err));
     }
 });
+
+let job = new cron.CronJob('* * * * *', function() {
+    fetch(url)
+        .then(res => res.json())
+        .then((out) => {
+            let info = out.MRData.RaceTable.Races[0].Results;
+            info.forEach((item) => {
+                Player.collection.update({name: item.Driver.givenName}, {
+                    name: item.Driver.givenName,
+                    surname: item.Driver.familyName,
+                    age: item.Driver.dateOfBirth,
+                    nationality: item.Driver.nationality,
+                    real_team: item.Constructor.constructorId})
+            });
+        })
+        .catch(err => console.error(err));
+    console.log('Data uploaded!');
+}, null, true);

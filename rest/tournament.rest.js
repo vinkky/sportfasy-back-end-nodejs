@@ -50,7 +50,7 @@ module.exports = function (router, Tournament, User) {
         // update tournament
         .put(function (req, res) {
             // update tournament by name
-            Tournament.findOne({name: req.body.name}, function (err, tournament) {
+            Tournament.findOne({name: req.body.name}).populate('_users').exec(function (err, tournament) {
                 if (err) {
                     console.log('ERROR UPDATING TOURNAMENT: ' + err.errmsg);
                     res.status(500).json({error: err});
@@ -66,7 +66,12 @@ module.exports = function (router, Tournament, User) {
                         res.status(500).json({error: err});
                     } else {
                         console.log('SUCCESS UPDATING TOURNAMENT: ' + tournament.name);
-                        res.status(200).json({message: 'Tournament updated!'});
+                        // res.status(200).json(tournament);
+                            Tournament.findOne({name: tournament.name}).populate('_users').exec(
+                                function (err, tournament) {
+                                    res.status(200).json(tournament );
+                                }
+                            );
                     }
                 });
             });
