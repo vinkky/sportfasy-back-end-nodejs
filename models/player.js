@@ -41,7 +41,9 @@ Player.count(function (err, count) {
     }
 });
 
-let job = new cron.CronJob('* * * * *', function() {
+//Update data every 5min
+
+let job = new cron.CronJob('*/5 * * * *', function () {
     fetch(url)
         .then(res => res.json())
         .then((out) => {
@@ -52,7 +54,8 @@ let job = new cron.CronJob('* * * * *', function() {
                     surname: item.Driver.familyName,
                     age: item.Driver.dateOfBirth,
                     nationality: item.Driver.nationality,
-                    real_team: item.Constructor.constructorId})
+                    real_team: item.Constructor.constructorId
+                })
             });
         })
         .catch(err => console.error(err));
