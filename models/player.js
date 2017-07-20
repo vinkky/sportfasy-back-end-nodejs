@@ -32,6 +32,7 @@ Player.count(function (err, count) {
                     obj.age = item.Driver.dateOfBirth || 0;
                     obj.nationality = item.Driver.nationality || 'No nationality';
                     obj.real_team = item.Constructor.constructorId || 'No team';
+                    obj.eff_points = item.points || -1
 
                     Player.collection.insert(obj)
                 });
@@ -41,7 +42,7 @@ Player.count(function (err, count) {
     }
 });
 
-//Update data every 5min
+//Update data every 5 min
 
 let job = new cron.CronJob('*/5 * * * *', function () {
     fetch(url)
@@ -50,11 +51,12 @@ let job = new cron.CronJob('*/5 * * * *', function () {
             let info = out.MRData.RaceTable.Races[0].Results;
             info.forEach((item) => {
                 Player.collection.update({name: item.Driver.givenName}, {
-                    name: item.Driver.givenName,
-                    surname: item.Driver.familyName,
-                    age: item.Driver.dateOfBirth,
-                    nationality: item.Driver.nationality,
-                    real_team: item.Constructor.constructorId
+                    name: item.Driver.givenName || 'No name',
+                    surname: item.Driver.familyName || 'No surname',
+                    age: item.Driver.dateOfBirth || 0,
+                    nationality: item.Driver.nationality || 'No nationality',
+                    real_team: item.Constructor.constructorId || 'No team',
+                    eff_points: item.points || -1
                 })
             });
         })
