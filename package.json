@@ -8,8 +8,8 @@
     "start": "node index.js",
     "prestart:dev": "npm install",
     "prestart:release": "npm install",
-    "start:dev": "NODE_ENV=dev forever start -w -v index.js cross-env",
-    "start:release": "NODE_ENV=release forever start -w -v index.js"
+    "start:dev": "NODE_ENV=dev pm2 start index.js --watch",
+    "start:release": "NODE_ENV=release pm2 start index.js --watch"
   },
 
   "repository": {
