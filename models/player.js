@@ -63,3 +63,6 @@ let job = new cron.CronJob('*/5 * * * *', function () {
         .catch(err => console.error(err));
     console.log('Data uploaded!');
 }, null, true);
+
+module.exports = Player;
+
