@@ -127,7 +127,7 @@ router.route('/login')
 
             } else {
                 console.log('User with this email not egists'.green);
-                res.status(401).json({"message": "User with this email eqists"});
+                res.status(401).json({"message": "User with this email not egists"});
 
             }
         })
