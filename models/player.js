@@ -39,8 +39,6 @@ Player.count(function (err, count) {
             .catch(err => console.error(err));
     }
 });
-//create model for tournament
-
 
 // export model
 module.exports = Player;
