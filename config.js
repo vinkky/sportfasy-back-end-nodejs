@@ -33,6 +33,8 @@ var config = {
             '/api/users',
             '/api/tournaments/',
             '/api/tournaments',
+            '/api/player/',
+            '/api/player',
             '/api/tournaments/:userID?',
             '/api/teams',
             '/api',
