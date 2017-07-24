@@ -4,15 +4,15 @@ let Team = require('./teams');
 let User = require('./users');
 
 let tournamentSchema = new Schema({
-    name: {type: String, required: true, unique: true},
-    start: {type: Date, required: true},
-    end: {type: Date, required: true},
-    max_teams: {type: Number, required: true},
+    name: {type: String, unique: true},
+    start: {type: Date,},
+    end: {type: Date,},
+    max_teams: {type: Number},
     _teams: [{type: [Schema.ObjectId], ref: 'Team'}],
-    max_players: {type: Number, required: true},
+    max_players: {type: Number},
     _users: [{type: [Schema.ObjectId], ref: 'User'}],
-    budget: {type: Number, required: true},
-    _tournament_master: {required:true, type: Schema.ObjectId, ref: 'User'},
+    budget: {type: Number},
+    _tournament_master: { type: Schema.ObjectId, ref: 'User'},
     created_at: Date,
     updated_at: Date
 });

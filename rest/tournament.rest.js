@@ -33,8 +33,8 @@ module.exports = function (router, Tournament, User) {
                 }
             });
         })
+        //get all tournaments, where user participate or is a master
         .get(function (req, res) {
-
             let query = function(){if(req.query.userID){return {_users: {_id: req.query.userID}}}}();
                 // get all tournaments
                 Tournament.find(query).populate('_users').populate('_teams').populate('_tournament_master').exec(function (err, tournament) {
@@ -50,7 +50,7 @@ module.exports = function (router, Tournament, User) {
         // update tournament
         .put(function (req, res) {
             // update tournament by name
-            Tournament.findOne({name: req.body.name}, function (err, tournament) {
+            Tournament.findOne({name: req.body.name}).populate('_users').exec(function (err, tournament) {
                 if (err) {
                     console.log('ERROR UPDATING TOURNAMENT: ' + err.errmsg);
                     res.status(500).json({error: err});
@@ -66,7 +66,12 @@ module.exports = function (router, Tournament, User) {
                         res.status(500).json({error: err});
                     } else {
                         console.log('SUCCESS UPDATING TOURNAMENT: ' + tournament.name);
-                        res.status(200).json({message: 'Tournament updated!'});
+                        // res.status(200).json(tournament);
+                            Tournament.findOne({name: tournament.name}).populate('_users').exec(
+                                function (err, tournament) {
+                                    res.status(200).json(tournament);
+                                }
+                            );
                     }
                 });
             });
@@ -86,4 +91,34 @@ module.exports = function (router, Tournament, User) {
                     }
                 });
         });
-};
+//     router.route('/t/:tournamentID?')
+//     // add new tournament
+//         .put(function (req, res) {
+//             Tournament.findOne({_id: req.query.tournamentID}).populate('_users').exec(function (err, tournament) {
+//                 if (err) {
+//                     console.log('ERROR UPDATING TOURNAMENT: ' + err.errmsg);
+//                     res.status(500).json({error: err});
+//                     return 0;
+//                 }
+//                 let content = req.query.tournamentID;
+//                 console.log("Content: " + content)
+//                // tournament.push(content);
+//                 res.status(200).json(tournament);
+//                 //save user
+//                 tournament.save(function (err) {
+//                     if (err) {
+//                         console.log('ERROR UPDATING TOURNAMENT: ' + err);
+//                         res.status(500).json({error: err});
+//                     } else {
+//                         console.log('SUCCESS UPDATING TOURNAMENT: ' + tournament.name);
+//                         // res.status(200).json(tournament);
+//                         Tournament.findOne({name: tournament.name}).populate('_users').exec(
+//                             function (err, tournament) {
+//                                 res.status(200).json(tournament );
+//                             }
+//                         );
+//                     }
+//                 });
+//             });
+// });
+}

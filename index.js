@@ -90,7 +90,7 @@ require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 
 require('./rest/teams.rest.js')(router, Team);
 
-require('./rest/player.rest')(router, Player);
+require('./rest/player.rest.js')(router, Player);
 
 router.route('/login')
     .post(function (req, res) {
