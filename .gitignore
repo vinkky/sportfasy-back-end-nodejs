@@ -1,3 +1,9 @@
+## User files
+
+.vs/
+build/
+
+
 
 .idea/
 # Created by .ignore support plugin (hsz.mobi)
