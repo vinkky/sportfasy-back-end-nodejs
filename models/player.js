@@ -65,4 +65,3 @@ let job = new cron.CronJob('*/30 * * * *', function () {
 }, null, true);
 
 module.exports = Player;
-
