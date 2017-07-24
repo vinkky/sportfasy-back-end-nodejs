@@ -5,8 +5,8 @@ module.exports = function (router, Team) {
                 if (!team) {
                     let team = new Team({
                         name: req.body.name,
-                        master: req.body.master,
-                        players: req.body.players,
+                        _team_master: req.body.team_master,
+                        _players: req.body.players,
                         created_at: req.body.created_at,
                         updated_at: req.body.updated_at
                     });
@@ -28,7 +28,7 @@ module.exports = function (router, Team) {
         })
         //Get all teams
         .get(function (req, res) {
-            Team.find(function (err, team) {
+            Team.find().populate('_players').populate('_team_master').exec(function (err, team) {
                 if (err) {
                     console.log('ERROR GETTING TEAMS: ');
                     res.status(500).json({error: err});
@@ -86,7 +86,7 @@ module.exports = function (router, Team) {
     router.route('/teams/:name')
         // get team by name (accessed at GET http://localhost:3000/api/teams/:name)
         .get(function (req, res) {
-            Team.find({name: req.params.name}, function (err, team) {
+            Team.find({name: req.params.name}).populate('_players').populate('_team_master').exec(function (err, team) {
                 if (err) {
                     console.log('ERROR GETTING TEAM: ');
                     res.status(500).json({error: err});

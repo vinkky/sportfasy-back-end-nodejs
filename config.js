@@ -35,6 +35,7 @@ var config = {
             '/api/tournaments',
             '/api/tournaments/:userID?',
             '/api/teams',
+            '/api/teams/yourusurotaru',
             '/api/player',
             '/api',
             '/',

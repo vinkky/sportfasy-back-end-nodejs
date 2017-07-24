@@ -11,7 +11,6 @@
     "start:dev": "NODE_ENV=dev pm2 start index.js --watch",
     "start:release": "NODE_ENV=release pm2 start index.js --watch"
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vinkky/sportfasy-back-end-nodejs.git"
@@ -26,11 +25,13 @@
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
     "cors": "^2.8.3",
+    "cron": "^1.2.1",
     "cross-env": "^5.0.1",
     "envify": "^4.1.0",
     "express": "^4.15.3",
     "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.10.6",
+    "node-cron": "^1.2.0",
     "node-fetch": "^1.7.1",
     "nodemon": "^1.11.0"
   },
