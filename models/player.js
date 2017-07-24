@@ -19,6 +19,7 @@ let Player = mongoose.model('Player', playerSchema);
 //API url
 let url = 'http://ergast.com/api/f1/current/last/results.json';
 
+//If DB empty, fetch data
 Player.count(function (err, count) {
     if (!err && count === 0) {
         fetch(url)
@@ -42,9 +43,8 @@ Player.count(function (err, count) {
     }
 });
 
-//Update data every 5 min
-
-let job = new cron.CronJob('*/5 * * * *', function () {
+//Update data every 30 min
+let job = new cron.CronJob('*/30 * * * *', function () {
     fetch(url)
         .then(res => res.json())
         .then((out) => {
