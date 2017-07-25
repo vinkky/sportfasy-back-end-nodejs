@@ -5,8 +5,8 @@ module.exports = function (router, Team) {
                 if (!team) {
                     let team = new Team({
                         name: req.body.name,
-                        _team_master: req.body.team_master,
-                        _players: req.body.players,
+                        _team_master: req.body._team_master,
+                        _players: req.body._players,
                         created_at: req.body.created_at,
                         updated_at: req.body.updated_at
                     });
