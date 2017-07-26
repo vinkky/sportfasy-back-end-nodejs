@@ -51,6 +51,23 @@ module.exports = function (router, Tournament, User) {
         .put(function (req, res) {
             // update tournament by name
             Tournament.findOne({name: req.body.name}).populate('_users').exec(function (err, tournament) {
+                
+                 if(req.body.sumUsers){
+                function calculate(){
+                    sum = 0
+                for (let i=0; i<req.body.sumUsers.length; i++){
+                    sum+=req.body.sumUsers[i].price;
+                }
+                  return sum;
+                }
+                if(calculate() >= tournament.budget){
+                    // res.status(500).json({message: 'players price exeeds tournament budget ' + req.body.name});
+                    console.log('virsija nustatyta suma   ' + calculate())
+                }else {
+                     res.status(200).json({ sucess: true, message: 'players price does not exeed tournament budget ' + req.body.name});
+                    console.log('nevirsija sumos    ' + calculate())
+                }
+                 }else{
                 if (err) {
                     console.log('ERROR UPDATING TOURNAMENT: ' + err.errmsg);
                     res.status(500).json({error: err});
@@ -66,15 +83,11 @@ module.exports = function (router, Tournament, User) {
                         res.status(500).json({error: err});
                     } else {
                         console.log('SUCCESS UPDATING TOURNAMENT: ' + tournament.name);
-                        // res.status(200).json(tournament);
-                            Tournament.findOne({name: tournament.name}).populate('_users').exec(
-                                function (err, tournament) {
-                                    res.status(200).json(tournament);
-                                }
-                            );
+                         res.status(200).json(tournament);
+                           
                     }
                 });
-            });
+             } });
         })
         // delete tournament
         .delete(function (req, res) {
@@ -91,4 +104,5 @@ module.exports = function (router, Tournament, User) {
                     }
                 });
         });
+         router.route('/tournament/:tou?')
 }

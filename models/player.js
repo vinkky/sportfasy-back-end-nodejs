@@ -44,7 +44,7 @@ Player.count(function (err, count) {
 });
 
 //Update data every 30 min
-let job = new cron.CronJob('*/30 * * * *', function () {
+let job = new cron.CronJob('*/1 * * * *', function () {
     fetch(url)
         .then(res => res.json())
         .then((out) => {
@@ -56,7 +56,8 @@ let job = new cron.CronJob('*/30 * * * *', function () {
                     age: item.Driver.dateOfBirth || 0,
                     nationality: item.Driver.nationality || 'No nationality',
                     real_team: item.Constructor.constructorId || 'No team',
-                    eff_points: item.points || -1
+                    eff_points: item.points || -1,
+                    price: 100
                 })
             });
         })
