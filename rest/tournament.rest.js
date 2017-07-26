@@ -35,9 +35,11 @@ module.exports = function (router, Tournament, User) {
         })
         //get all tournaments, where user participate or is a master
         .get(function (req, res) {
-            let query = function(){if(req.query.userID){return {'_users': req.query.userID}}}();
+            let date = new Date ();
+            let query = function(){if(req.query.userID){return {'_users': req.query.userID}} else {return {end: {$gte: date}}}}();
                 // get all tournaments
                 Tournament.find(query).populate('_users').populate('_teams').populate('_tournament_master').exec(function (err, tournament) {
+
                     if (err) {
                         console.log('ERROR GETTING TOURNAMENTS: ');
                         res.status(500).json({error: err});
