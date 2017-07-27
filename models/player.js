@@ -44,7 +44,7 @@ Player.count(function (err, count) {
 });
 
 //Update data every 30 min
-let job = new cron.CronJob('*/1 * * * *', function () {
+let job = new cron.CronJob('*/15 * * * *', function () {
     fetch(url)
         .then(res => res.json())
         .then((out) => {

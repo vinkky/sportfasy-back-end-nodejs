@@ -60,12 +60,12 @@ module.exports = function (router, Tournament, User) {
                 }
                   return sum;
                 }
-                if(calculate() >= tournament.budget){
-                    // res.status(500).json({message: 'players price exeeds tournament budget ' + req.body.name});
-                    console.log('virsija nustatyta suma   ' + calculate())
-                }else {
-                     res.status(200).json({ sucess: true, message: 'players price does not exeed tournament budget ' + req.body.name});
+                if(calculate() <= tournament.budget){
+                    res.status(200).json({ sucess: true, message: 'players price does not exeed tournament budget ' + req.body.name});
                     console.log('nevirsija sumos    ' + calculate())
+                }else {
+                     res.status(500).json({message: 'players price exeeds tournament budget ' + req.body.name});
+                    console.log('virsija nustatyta suma   ' + calculate())
                 }
                  }else{
                 if (err) {
