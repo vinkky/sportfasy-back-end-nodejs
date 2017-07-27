@@ -29,7 +29,7 @@ module.exports = function (router, Tournament, User) {
                     });
                 } else {
                     console.log('Tournament with this name eqists'.green);
-                    res.status(409).json({"message": "Tournament with this name egists"});
+                    res.status(409).json({'message': 'Tournament with this name egists'});
                 }
             });
         })
