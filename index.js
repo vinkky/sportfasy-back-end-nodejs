@@ -4,6 +4,7 @@ let app = express();
 let bodyParser = require('body-parser');
 let User = require('./models/users');
 let Tournament = require('./models/tournaments');
+let TournamentTeams = require('./models/tournament_teams');
 let Team = require('./models/teams');
 let Player = require('./models/player');
 let bcrypt = require('bcrypt');
@@ -85,6 +86,7 @@ app.use('/api', router);
 // ======================================================
 
 require('./rest/tournament.rest.js')(router, Tournament,User);
+require('./rest/tournament_teams.rest.js')(router, TournamentTeams,Team);
 
 require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 
