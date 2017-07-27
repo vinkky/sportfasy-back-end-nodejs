@@ -35,12 +35,10 @@ module.exports = function (router, Tournament, User) {
         })
         //get all tournaments, where user participate or is a master
         .get(function (req, res) {
-            let date = new Date ();
-            let name = Object.keys(req.query).sort();
-            let query = function(){
-                switch(String(name)) {
+            let query = function () {
+                switch (String(Object.keys(req.query).sort())) {
                     case 'tournamentMaster,userID':
-                        return {$and: [ { _users:  req.query.userID }, {_tournament_master:  req.query.tournamentMaster}]};
+                        return {$and: [{_users: req.query.userID}, {_tournament_master: req.query.tournamentMaster}]};
                         break;
                     case 'userID':
                         return {_users: req.query.userID};
@@ -49,21 +47,20 @@ module.exports = function (router, Tournament, User) {
                         return {_tournament_master: req.query.tournamentMaster};
                         break;
                     default:
-                        return {'end': {$gte: date}}
+                        return {'end': {$gte: Date()}}
                 }
             }();
+            // get all tournaments
+            Tournament.find(query).populate('_users').populate('_teams').populate('_tournament_master').exec(function (err, tournament) {
 
-                // get all tournaments
-                Tournament.find(query).populate('_users').populate('_teams').populate('_tournament_master').exec(function (err, tournament) {
-
-                    if (err) {
-                        console.log('ERROR GETTING TOURNAMENTS: ');
-                        res.status(500).json({error: err});
-                    } else {
-                        console.log('SUCCESS GETTING TOURNAMENTS');
-                        res.status(200).json(tournament);
-                    }
-                });
+                if (err) {
+                    console.log('ERROR GETTING TOURNAMENTS: ');
+                    res.status(500).json({error: err});
+                } else {
+                    console.log('SUCCESS GETTING TOURNAMENTS');
+                    res.status(200).json(tournament);
+                }
+            });
         })
         // update tournament
         .put(function (req, res) {
