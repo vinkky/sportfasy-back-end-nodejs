@@ -11,11 +11,13 @@ let raceSchema = new Schema({
     raceName: {type: String},
     date: {type: Date},
     start_time: {type: Number},
-    name: {type: String},
-    surname: {type: String},
-    race_time: {type: Number},
-    position: {type: Number},
-    eff_points: {type: Number}
+    _driver: [{
+        name: {type: String},
+        surname: {type: String},
+        race_time: {type: Number},
+        position: {type: Number},
+        eff_points: {type: Number}
+    }]
 
 });
 
