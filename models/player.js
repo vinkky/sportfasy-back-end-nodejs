@@ -48,7 +48,7 @@ Player.count(function (err, count) {
         .catch(err => console.error(err));
 });
 
-//Update data every 30 min
+//Update data every min
 let job = new cron.CronJob('*/1 * * * *', function () {
     Player.count(function (err, count) {
         fetch(url)
