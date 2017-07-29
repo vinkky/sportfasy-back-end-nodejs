@@ -10,14 +10,14 @@ let raceSchema = new Schema({
     round: {type: Number},
     raceName: {type: String},
     date: {type: Date},
-    start_time: {type: Number},
-    _driver: [{
-        name: {type: String},
-        surname: {type: String},
-        race_time: {type: Number},
-        position: {type: Number},
-        eff_points: {type: Number}
-    }]
+    start_time: {type: Number}
+    // _driver: [{
+    //     name: {type: String},
+    //     surname: {type: String},
+    //     race_time: {type: Number},
+    //     position: {type: Number},
+    //     eff_points: {type: Number}
+    // }]
 
 });
 
@@ -45,6 +45,7 @@ let url = 'http://ergast.com/api/f1/current/results.json';
                     obj.raceName = item.raceName || 'No race name';
                     obj.date = item.date || 'No date';
                     obj.start_time = item.time || 'No time';
+                    obj.results = item.Results || 'No results';
                 //     obj.name = item.Results.Driver.givenName || 'No name';
                 //     obj.surname = item.Driver.familyName || 'No surname';
                 //     obj.race_time = item.Time.time || 'No race time';
@@ -71,6 +72,7 @@ let job = new cron.CronJob('*/2 * * * *', function () {
                     raceName: item.raceName || 'No race name', //
                     date: item.date || 'No date',              //
                     start_time: item.time || 'No time',        // kazkas
+                    results: item.Results || 'No results'
                     // name: item.Driver.givenName || 'No name',
                     // surname: item.Driver.familyName || 'No surname',
                     // race_time: item.Time.time || 'No race time',
