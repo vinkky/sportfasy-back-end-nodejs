@@ -11,13 +11,6 @@ let raceSchema = new Schema({
     raceName: {type: String},
     date: {type: Date},
     start_time: {type: Number}
-    // _driver: [{
-    //     name: {type: String},
-    //     surname: {type: String},
-    //     race_time: {type: Number},
-    //     position: {type: Number},
-    //     eff_points: {type: Number}
-    // }]
 
 });
 
@@ -49,12 +42,7 @@ Race.count(function (err, count) {
                     obj.date = item.date || 'No date';
                     obj.start_time = item.time || 'No time';
                     obj.results = item.Results || 'No results';
-                //     obj.name = item.Results.Driver.givenName || 'No name';
-                //     obj.surname = item.Driver.familyName || 'No surname';
-                //     obj.race_time = item.Time.time || 'No race time';
-                //     obj.position = item.position || -1
-                //     obj.eff_points = item.points || -1
-                //
+
                     Race.collection.insert(obj)
                 });
 
@@ -65,24 +53,19 @@ Race.count(function (err, count) {
 
 
 //Update data every 30 min
-let job = new cron.CronJob('*/2 * * * *', function () {
+let job = new cron.CronJob('*/30 * * * *', function () {
     fetch(url)
         .then(res => res.json())
         .then((out) => {
             let info = out.MRData.RaceTable.Races;
             info.forEach((item) => {
                 Race.collection.update({season: item.season}, {
-                    season: item.season || 0,                  //
-                    round: item.round || 0,                    //
-                    raceName: item.raceName || 'No race name', //
-                    date: item.date || 'No date',              //
-                    start_time: item.time || 'No time',        // kazkas
+                    season: item.season || 0,
+                    round: item.round || 0,
+                    raceName: item.raceName || 'No race name',
+                    date: item.date || 'No date',
+                    start_time: item.time || 'No time',
                     results: item.Results || 'No results'
-                    // name: item.Driver.givenName || 'No name',
-                    // surname: item.Driver.familyName || 'No surname',
-                    // race_time: item.Time.time || 'No race time',
-                    // position: item.position || -1,
-                    // eff_points: item.points || -1
                 })
             });
         })
