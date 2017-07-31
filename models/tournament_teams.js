@@ -2,8 +2,8 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let tournamentTeamsSchema = new Schema({
-    _tournament_id: { type: Schema.ObjectId, ref: 'Tournament'},
-    _team_id: { type: Schema.ObjectId, ref: 'Team'},
+    _tournament_id: {type: Schema.ObjectId, ref: 'Tournament'},
+    _team_id: {type: Schema.ObjectId, ref: 'Team'},
     created_at: Date,
     updated_at: Date
 });
@@ -23,7 +23,7 @@ tournamentTeamsSchema.pre('save', function (next) {
     next();
 });
 
-tournamentTeamsSchema.index( { '_team_id': 1 },{unique: true} );
+tournamentTeamsSchema.index({'_team_id': 1}, {unique: true});
 
 let TournamentTeams = mongoose.model('TournamentTeams', tournamentTeamsSchema);
 

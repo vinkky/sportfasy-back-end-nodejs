@@ -3,7 +3,7 @@ let Schema = mongoose.Schema;
 
 let teamSchema = new Schema({
     name: {type: String, required: true, unique: true},
-    _team_master: {required:true, type: Schema.ObjectId, ref: 'User'},
+    _team_master: {required: true, type: Schema.ObjectId, ref: 'User'},
     _players: [{type: [Schema.ObjectId], ref: 'Player'}],
     created_at: Date,
     updated_at: Date

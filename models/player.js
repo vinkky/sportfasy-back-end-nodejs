@@ -39,12 +39,11 @@ Player.count(function (err, count) {
                     obj.real_team = item.Constructor.constructorId || 'No team';
                     obj.eff_points = item.points || -1;
                     obj.current_position = item.position || 0;
-
-                   Player.collection.insert(obj)
+                    Player.collection.insert(obj)
                 }
             });
 
-       })
+        })
         .catch(err => console.error(err));
 });
 
