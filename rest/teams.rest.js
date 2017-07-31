@@ -84,7 +84,7 @@ module.exports = function (router, Team) {
         });
 
     router.route('/teams/:name')
-        // get team by name (accessed at GET http://localhost:3000/api/teams/:name)
+    // get team by name (accessed at GET http://localhost:3000/api/teams/:name)
         .get(function (req, res) {
             Team.find({name: req.params.name}).populate('_players').populate('_team_master').exec(function (err, team) {
                 if (err) {

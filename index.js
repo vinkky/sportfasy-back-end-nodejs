@@ -4,8 +4,10 @@ let app = express();
 let bodyParser = require('body-parser');
 let User = require('./models/users');
 let Tournament = require('./models/tournaments');
+let TournamentTeams = require('./models/tournament_teams');
 let Team = require('./models/teams');
 let Player = require('./models/player');
+let Race = require('./models/race');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 let cors = require('cors');
@@ -85,12 +87,15 @@ app.use('/api', router);
 // ======================================================
 
 require('./rest/tournament.rest.js')(router, Tournament,User);
+require('./rest/tournament_teams.rest.js')(router, TournamentTeams,Team);
 
 require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 
 require('./rest/teams.rest.js')(router, Team);
 
 require('./rest/player.rest.js')(router, Player);
+
+require('./rest/race.rest.js')(router, Race);
 
 router.route('/login')
     .post(function (req, res) {

@@ -1,16 +1,15 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
-let teamSchema = new Schema({
-    name: {type: String, required: true, unique: true},
-    _team_master: {required: true, type: Schema.ObjectId, ref: 'User'},
-    _players: [{type: [Schema.ObjectId], ref: 'Player'}],
+let tournamentTeamsSchema = new Schema({
+    _tournament_id: {type: Schema.ObjectId, ref: 'Tournament'},
+    _team_id: {type: Schema.ObjectId, ref: 'Team'},
     created_at: Date,
     updated_at: Date
 });
 
 // on every save, add the date
-teamSchema.pre('save', function (next) {
+tournamentTeamsSchema.pre('save', function (next) {
     // get the current date
     let currentDate = new Date();
 
@@ -24,8 +23,8 @@ teamSchema.pre('save', function (next) {
     next();
 });
 
-//create model for tournament
-let Team = mongoose.model('Team', teamSchema);
+tournamentTeamsSchema.index({'_team_id': 1}, {unique: true});
 
-// export model
-module.exports = Team;
+let TournamentTeams = mongoose.model('TournamentTeams', tournamentTeamsSchema);
+
+module.exports = TournamentTeams;
