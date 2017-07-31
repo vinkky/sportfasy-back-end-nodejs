@@ -1,5 +1,5 @@
 module.exports = function (router, Tournament, User) {
-    router.route('/tournaments/:userID?/:tournamentMaster?')
+    router.route('/tournaments/:userID?/:tournamentMaster?/:name?')
         // add new tournament
         .post(function (req, res) {
             Tournament.findOne({name: req.body.name}, function (err, tournament) {
@@ -45,6 +45,9 @@ module.exports = function (router, Tournament, User) {
                         break;
                     case 'tournamentMaster':
                         return {_tournament_master: req.query.tournamentMaster};
+                        break;
+                    case 'name':
+                        return {name: req.query.name};
                         break;
                     default:
                         return {'end': {$gte: Date()}}
