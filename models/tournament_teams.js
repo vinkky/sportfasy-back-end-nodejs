@@ -23,7 +23,7 @@ tournamentTeamsSchema.pre('save', function (next) {
     next();
 });
 
-tournamentTeamsSchema.index( { '_team_id': 1 },{unique: true} );
+tournamentTeamsSchema.index( { '_team': 1 },{unique: true} );
 
 let TournamentTeams = mongoose.model('TournamentTeams', tournamentTeamsSchema);
 
