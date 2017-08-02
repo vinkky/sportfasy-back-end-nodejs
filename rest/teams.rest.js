@@ -17,7 +17,9 @@ module.exports = function (router, Team) {
                             res.status(500).json({error: err});
                         } else {
                             console.log('SUCCESS CREATING TEAM: ' + team.name);
-                            res.status(200).json({message: 'Team created!', team: team});
+
+                            res.status(200).json({message: 'Team created!',team: team});
+
                         }
                     });
                 } else {
