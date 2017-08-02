@@ -1,5 +1,5 @@
 module.exports = function (router, TournamentTeams, Team, User) {
-    router.route('/tournament/teams/:userID?/:tournamentMaster?/:tournamentID?')
+    router.route('/tournament/teams/:teamMaster?/:tournamentID?/:teamID?')
         .post(function (req, res) {
             let tournament_teams = new TournamentTeams({
                 _tournament: req.body._tournament_id,
