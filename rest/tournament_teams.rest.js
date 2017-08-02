@@ -1,4 +1,4 @@
-module.exports = function (router, TournamentTeams, Team) {
+module.exports = function (router, TournamentTeams, Team, User) {
     router.route('/tournament/teams/:userID?/:tournamentMaster?/:tournamentID?')
         .post(function (req, res) {
             let tournament_teams = new TournamentTeams({
@@ -32,7 +32,7 @@ module.exports = function (router, TournamentTeams, Team) {
                         return {_tournament_master: req.query.tournamentMaster};
                         break;
                     case 'teamMaster':
-                        return {_team_master: req.query.teamMaster};
+                        return {_team_master: req.query._team_master};
                         break;
                     case '_tournament_id':
                         return {'_tournament': req.query._tournament_id};
@@ -42,7 +42,7 @@ module.exports = function (router, TournamentTeams, Team) {
                         break;
                 }
             }();
-            let populateQuery = [{path: '_tournament', populate: {path: '_tournament_master'}},
+            let populateQuery = [{path: '_tournament',populate: {path: '_users'}, populate: {path: '_tournament_master'}},
                 {path: '_team', populate: [{path: '_team_master'}, {path: '_players'}]}
             ];
             TournamentTeams.find(query).populate(populateQuery).exec(function (err, tournamentTeams) {
