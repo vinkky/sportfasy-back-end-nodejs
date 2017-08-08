@@ -1,9 +1,10 @@
 module.exports = function (router, TournamentTeams, Team, User) {
-    router.route('/tournament/teams/:teamMaster?/:tournamentID?/:teamID?')
+    router.route('/tournament/teams/:_tournament_id?')
         .post(function (req, res) {
             let tournament_teams = new TournamentTeams({
                 _tournament: req.body._tournament_id,
                 _team: req.body._team_id,
+                _user: req.body._user_id
             });
             tournament_teams.save(function (err) {
                 if (err) {
@@ -19,24 +20,20 @@ module.exports = function (router, TournamentTeams, Team, User) {
         .get(function (req, res) {
             let query = function () {
                 switch (String(Object.keys(req.query).sort())) {
-                    case 'teamMaster,userID':
-                        return {$and: [{'_tournament._users._id': req.query.userID}, {'_team._team_master': req.query.teamMaster}]};
+                    case 'userID':
+                        return {_user: req.query.userID};
                         break;
-                    case 'teamMaster':
-                        return {'_team._team_master': req.query.teamMaster};
+                    case 'tournamentID':
+                        return {_tournament: req.query.tournamentID};
                         break;
-                    case '_tournament_id':
-                        return {'_tournament': req.query._tournament_id};
+                    case 'teamID':
+                        return {_team: req.query.teamID}
                         break;
-                    case '_team_id':
-                        return {'_team': req.query._team_id}
-                        break;
+                    default:
+                        return {}
                 }
             }();
-            let populateQuery = [{path: '_tournament',populate: {path: '_users'}, populate: {path: '_tournament_master'}},
-                {path: '_team', populate: [{path: '_team_master'}, {path: '_players'}]}
-            ];
-            TournamentTeams.find(query).populate(populateQuery).exec(function (err, tournamentTeams) {
+            TournamentTeams.find(query).populate('_team').populate('_tournament').populate('_user').exec(function (err, tournamentTeams) {
                 if (err) {
                     console.log('ERROR GETTING TOURNAMENTS TEAMS: ');
                     res.status(500).json({error: err});

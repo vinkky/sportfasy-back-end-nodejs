@@ -6,7 +6,7 @@ let str;
 let str1;
 
 let raceSchema = new Schema({
-    season:{type: Number},
+    season: {type: Number},
     round: {type: Number},
     raceName: {type: String},
     date: {type: Date},
@@ -17,60 +17,34 @@ let raceSchema = new Schema({
 //create model for player
 let Race = mongoose.model('Race', raceSchema);
 
-//API url
-let url = 'http://ergast.com/api/f1/current/results.json';
+let year = new Date().getFullYear();
 
-//If DB empty, fetch data
-
+//Insert DB
 Race.count(function (err, count) {
-    if (!err && count === 0) {
-        fetch(url)
+    for (let i=1; i<30; i++) {
+        fetch('http://ergast.com/api/f1/' + year + '/' + i + '/results.json')
             .then(res => res.json())
             .then((out) => {
-                str = JSON.stringify(out, null, 4); // (Optional) beautiful indented output.
-                // console.log(str);
-                let info = out.MRData.RaceTable.Races;
-
-                str1 = JSON.stringify(info, null, 4); // (Optional) beautiful indented output.
-                // console.log(str1);
-
-                info.forEach((item) => {
-                    let obj = {};
-                    obj.season = item.season || 0;
-                    obj.round = item.round || 0;
-                    obj.raceName = item.raceName || 'No race name';
-                    obj.date = item.date || 'No date';
-                    obj.start_time = item.time || 'No time';
-                    obj.results = item.Results || 'No results';
-
-                    Race.collection.insert(obj)
-                });
+                if (out.MRData.RaceTable.Races[0].season !== undefined && !err && count === 0) {
+                    Race.collection.insert(out);
+                }
 
             })
             .catch(err => console.error(err));
     }
 });
 
-
-//Update data every 30 min
-let job = new cron.CronJob('*/30 * * * *', function () {
-    fetch(url)
-        .then(res => res.json())
-        .then((out) => {
-            let info = out.MRData.RaceTable.Races;
-            info.forEach((item) => {
-                Race.collection.update({season: item.season}, {
-                    season: item.season || 0,
-                    round: item.round || 0,
-                    raceName: item.raceName || 'No race name',
-                    date: item.date || 'No date',
-                    start_time: item.time || 'No time',
-                    results: item.Results || 'No results'
-                })
-            });
-        })
-        .catch(err => console.error(err));
-    console.log('Data uploaded!');
+//Update data every min
+let job = new cron.CronJob('*/2 * * * *', function () {
+    for (let i=1; i<=30; i++){
+        fetch('http://ergast.com/api/f1/' + year + '/' + i + '/results.json')
+            .then(res => res.json())
+            .then((out) => {
+                    Race.collection.update({_id: out._id}, {MRData: out.MRData},{ upsert: true })
+            })
+            .catch(err => console.error(err));
+}
+        console.log('Race updated!');
 }, null, true);
 
 module.exports = Race;
