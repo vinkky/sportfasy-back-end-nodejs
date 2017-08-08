@@ -26,7 +26,7 @@ module.exports = function (router, TournamentTeams, Team) {
                         return {'_team': req.query._team_id}
                         break;
                     default:
-                        null;
+                        return {};
                 }
             }();
             let populateQuery = [{path: '_tournament', populate: {path: '_tournament_master'}},
