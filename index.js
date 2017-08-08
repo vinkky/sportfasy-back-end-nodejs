@@ -5,6 +5,7 @@ let bodyParser = require('body-parser');
 let User = require('./models/users');
 let Tournament = require('./models/tournaments');
 let TournamentTeams = require('./models/tournament_teams');
+let UserLedger = require('./models/userledger');
 let Team = require('./models/teams');
 let Player = require('./models/player');
 let Race = require('./models/race');
@@ -96,6 +97,8 @@ require('./rest/teams.rest.js')(router, Team);
 require('./rest/player.rest.js')(router, Player);
 
 require('./rest/race.rest.js')(router, Race);
+
+require('./rest/userledger.rest.js')(router, UserLedger);
 
 router.route('/login')
     .post(function (req, res) {
