@@ -8,7 +8,8 @@ module.exports = function (router, Team) {
                         _team_master: req.body._team_master,
                         _players: req.body._players,
                         created_at: req.body.created_at,
-                        updated_at: req.body.updated_at
+                        updated_at: req.body.updated_at,
+                        user_points_converted: false
                     });
                     // save the team and check for errors
                     team.save(function (err) {

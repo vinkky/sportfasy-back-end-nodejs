@@ -5,6 +5,7 @@ let teamSchema = new Schema({
     name: {type: String, required: true, unique: true},
     _team_master: {required: true, type: Schema.ObjectId, ref: 'User'},
     _players: [{type: [Schema.ObjectId], ref: 'Player'}],
+    user_points_converted: {type: Boolean},
     created_at: Date,
     updated_at: Date
 });

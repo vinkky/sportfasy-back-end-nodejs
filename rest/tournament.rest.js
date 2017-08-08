@@ -49,7 +49,7 @@ module.exports = function (router, Tournament, User) {
                     case 'name':
                         return {name: req.query.name};
                         break;
-                    default:
+                    default: //sita case tik bus ne gte o ktias
                         return {'end': {$gte: Date()}}
                 }
             }();
