@@ -5,6 +5,7 @@ let bodyParser = require('body-parser');
 let User = require('./models/users');
 let Tournament = require('./models/tournaments');
 let TournamentTeams = require('./models/tournament_teams');
+let PlayersLedger = require('./models/players_ledger');
 let Team = require('./models/teams');
 let Player = require('./models/player');
 let Race = require('./models/race');
@@ -88,6 +89,7 @@ app.use('/api', router);
 
 require('./rest/tournament.rest.js')(router, Tournament,User);
 require('./rest/tournament_teams.rest.js')(router, TournamentTeams,Team);
+require('./rest/players_ledger_rest.js')(router, PlayersLedger,Team);
 
 require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 

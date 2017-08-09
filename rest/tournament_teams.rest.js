@@ -30,7 +30,7 @@ module.exports = function (router, TournamentTeams, Team, User) {
                         return {_team: req.query.teamID}
                         break;
                     default:
-                        return {}
+                        return {};
                 }
             }();
             TournamentTeams.find(query).populate('_team').populate('_tournament').populate('_user').exec(function (err, tournamentTeams) {
