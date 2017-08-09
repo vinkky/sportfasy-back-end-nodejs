@@ -40,7 +40,6 @@ var config = {
             '/api/teams',
             '/api/teams/',
             '/api/users',
-            '/api/teams/yourusurotaru',
             '/api/player',
             '/api/race',
             '/api',
