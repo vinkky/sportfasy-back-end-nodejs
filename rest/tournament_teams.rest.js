@@ -1,9 +1,10 @@
-module.exports = function (router, TournamentTeams, Team) {
-    router.route('/tournament/teams/:tournamentID?')
+module.exports = function (router, TournamentTeams, Team, User) {
+    router.route('/tournament/teams/:_tournament_id?')
         .post(function (req, res) {
             let tournament_teams = new TournamentTeams({
                 _tournament: req.body._tournament_id,
                 _team: req.body._team_id,
+                _user: req.body._user_id
             });
             tournament_teams.save(function (err) {
                 if (err) {
@@ -19,20 +20,20 @@ module.exports = function (router, TournamentTeams, Team) {
         .get(function (req, res) {
             let query = function () {
                 switch (String(Object.keys(req.query).sort())) {
-                    case '_tournament_id':
-                        return {'_tournament': req.query._tournament_id};
+                    case 'userID':
+                        return {_user: req.query.userID};
                         break;
-                    case '_team_id':
-                        return {'_team': req.query._team_id}
+                    case 'tournamentID':
+                        return {_tournament: req.query.tournamentID};
+                        break;
+                    case 'teamID':
+                        return {_team: req.query.teamID}
                         break;
                     default:
                         return {};
                 }
             }();
-            let populateQuery = [{path: '_tournament', populate: {path: '_tournament_master'}},
-                {path: '_team', populate: [{path: '_team_master'}, {path: '_players'}]}
-            ];
-            TournamentTeams.find(query).populate(populateQuery).exec(function (err, tournamentTeams) {
+            TournamentTeams.find(query).populate('_team').populate('_tournament').populate('_user').exec(function (err, tournamentTeams) {
                 if (err) {
                     console.log('ERROR GETTING TOURNAMENTS TEAMS: ');
                     res.status(500).json({error: err});

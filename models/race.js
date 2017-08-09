@@ -6,7 +6,7 @@ let str;
 let str1;
 
 let raceSchema = new Schema({
-    season:{type: Number},
+    season: {type: Number},
     round: {type: Number},
     raceName: {type: String},
     date: {type: Date},
@@ -16,9 +16,10 @@ let raceSchema = new Schema({
 
 //create model for player
 let Race = mongoose.model('Race', raceSchema);
+let year = new Date().getFullYear();
 
 //API url
-let url = 'http://ergast.com/api/f1/current/results.json';
+let url = 'http://ergast.com/api/f1/' + year + '/results.json?limit=9000000';
 
 //If DB empty, fetch data
 
@@ -53,24 +54,40 @@ Race.count(function (err, count) {
 
 
 //Update data every 30 min
-let job = new cron.CronJob('*/30 * * * *', function () {
+let last = new Object();
+let next;
+let job = new cron.CronJob('* * */1 * * ', function () {
+    Race.findOne().sort({date: 'descending'}).exec(function (err, race) {
+        if (!err) {
+            last = race
+        } else {
+            console.log("No results this season")
+        }
+    })
     fetch(url)
         .then(res => res.json())
         .then((out) => {
-            let info = out.MRData.RaceTable.Races;
-            info.forEach((item) => {
-                Race.collection.update({season: item.season}, {
-                    season: item.season || 0,
-                    round: item.round || 0,
-                    raceName: item.raceName || 'No race name',
-                    date: item.date || 'No date',
-                    start_time: item.time || 'No time',
-                    results: item.Results || 'No results'
-                })
-            });
+            next = last.round;
+            let info = out.MRData.RaceTable.Races[next];
+            if (info !== undefined) {
+                let obj = {};
+                obj.season = info.season || 0;
+                obj.round = info.round || 0;
+                obj.raceName = info.raceName || 'No race name';
+                obj.date = info.date || 'No date';
+                obj.start_time = info.time || 'No time';
+                obj.results = info.Results || 'No results';
+
+                Race.collection.insert(obj)
+            }
+            else {
+                console.log("Nothing to update");
+            }
         })
         .catch(err => console.error(err));
+
     console.log('Data uploaded!');
+
 }, null, true);
 
 module.exports = Race;

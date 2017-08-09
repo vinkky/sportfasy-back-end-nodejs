@@ -4,6 +4,7 @@ let Schema = mongoose.Schema;
 let tournamentTeamsSchema = new Schema({
     _player: { type: Schema.ObjectId, ref: 'Tournament'},
     _team: { type: Schema.ObjectId, ref: 'Team'},
+    _user: {type: Schema.ObjectId, ref: 'User'},
     created_at: Date,
     updated_at: Date
 });
