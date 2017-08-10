@@ -56,7 +56,7 @@ Race.count(function (err, count) {
 //Update data every 30 min
 let last = new Object();
 let next;
-let job = new cron.CronJob('* * */1 * * ', function () {
+let job = new cron.CronJob('*/1 * * * * ', function () {
     Race.findOne().sort({date: 'descending'}).exec(function (err, race) {
         if (!err) {
             last = race
@@ -77,6 +77,17 @@ let job = new cron.CronJob('* * */1 * * ', function () {
                 obj.date = info.date || 'No date';
                 obj.start_time = info.time || 'No time';
                 obj.results = info.Results || 'No results';
+
+                Race.collection.insert(obj)
+            }
+            else if (info !== undefined || last.season < year){
+                let obj = {};
+                obj.season = out.MRData.RaceTable.Races[0].season || 0;
+                obj.round = out.MRData.RaceTable.Races[0].round || 0;
+                obj.raceName = out.MRData.RaceTable.Races[0].raceName || 'No race name';
+                obj.date = out.MRData.RaceTable.Races[0].date || 'No date';
+                obj.start_time = out.MRData.RaceTable.Races[0].time || 'No time';
+                obj.results = out.MRData.RaceTable.Races[0].Results || 'No results';
 
                 Race.collection.insert(obj)
             }
