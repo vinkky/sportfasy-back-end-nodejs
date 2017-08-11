@@ -5,6 +5,7 @@ let cron = require('cron');
 
 let TournamentTeam = require('./tournament_teams');
 let Player = require('./player');
+let Team = require('./teams')
 let PlayersLedger = require('./players_ledger');
 
 let raceSchema = new Schema({
@@ -77,16 +78,19 @@ let job = new cron.CronJob('*/10 * * * * * ', function () {
 
                 Race.collection.insert(obj)
 
-                TournamentTeam.collection.find().forEach(function(doc) {
-                        Player.collection.find().forEach(function(player){
+                Team.collection.find().forEach(function(team) {
+                    team._players.forEach(function(Tplayer) {
+                        Player.collection.find({_id: Tplayer}).forEach(function (player) {
                             {
                                 let obj = {}
-                                obj.tournament = doc._tournament;
-                                obj.team = doc._team;
+                                obj.team = team._id;
+                                obj.tournament = team._tournament;
                                 obj.player = player;
+
                                 PlayersLedger.collection.insert(obj)
                             }
                         })
+                    })
 
                 })
 

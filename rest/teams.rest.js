@@ -7,6 +7,7 @@ module.exports = function (router, Team) {
                         name: req.body.name,
                         _team_master: req.body._team_master,
                         _players: req.body._players,
+                        _tournament: req.body._tournament,
                         created_at: req.body.created_at,
                         updated_at: req.body.updated_at,
                         user_points_converted: false
