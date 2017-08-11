@@ -2,8 +2,10 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let fetch = require('node-fetch');
 let cron = require('cron');
-let str;
-let str1;
+
+let TournamentTeam = require('./tournament_teams');
+let Player = require('./player');
+let PlayersLedger = require('./players_ledger');
 
 let raceSchema = new Schema({
     season: {type: Number},
@@ -28,12 +30,7 @@ Race.count(function (err, count) {
         fetch(url)
             .then(res => res.json())
             .then((out) => {
-                str = JSON.stringify(out, null, 4); // (Optional) beautiful indented output.
-                // console.log(str);
                 let info = out.MRData.RaceTable.Races;
-
-                str1 = JSON.stringify(info, null, 4); // (Optional) beautiful indented output.
-                // console.log(str1);
 
                 info.forEach((item) => {
                     let obj = {};
@@ -56,7 +53,7 @@ Race.count(function (err, count) {
 //Update data every 30 min
 let last = new Object();
 let next;
-let job = new cron.CronJob('*/1 * * * * ', function () {
+let job = new cron.CronJob('*/10 * * * * * ', function () {
     Race.findOne().sort({date: 'descending'}).exec(function (err, race) {
         if (!err) {
             last = race
@@ -79,6 +76,20 @@ let job = new cron.CronJob('*/1 * * * * ', function () {
                 obj.results = info.Results || 'No results';
 
                 Race.collection.insert(obj)
+
+                TournamentTeam.collection.find().forEach(function(doc) {
+                        Player.collection.find().forEach(function(player){
+                            {
+                                let obj = {}
+                                obj.tournament = doc._tournament;
+                                obj.team = doc._team;
+                                obj.player = player;
+                                PlayersLedger.collection.insert(obj)
+                            }
+                        })
+
+                })
+
             }
             else if (info !== undefined || last.season < year){
                 let obj = {};
@@ -96,9 +107,6 @@ let job = new cron.CronJob('*/1 * * * * ', function () {
             }
         })
         .catch(err => console.error(err));
-
-    console.log('Data uploaded!');
-
 }, null, true);
 
 module.exports = Race;

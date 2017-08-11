@@ -37,5 +37,4 @@ let Tournament = mongoose.model('Tournament', tournamentSchema);
 
 // export model
 module.exports = Tournament;
-module.exports = tournamentSchema;
 

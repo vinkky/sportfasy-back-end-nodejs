@@ -1,4 +1,3 @@
-'use strict';
 module.exports = function (router, PlayersLedger, Team, Player, Tournament) {
     router.route('/tournament/players_ledger/:tournament_id?/:team_id?/:player_id?')
         .post(function (req, res) {
@@ -52,57 +51,17 @@ module.exports = function (router, PlayersLedger, Team, Player, Tournament) {
                 {path: '_player'},
                 {path: '_race'}
             ];
-
-                PlayersLedger.find({}).populate(populateQuery).exec(function (err, playersledger){
-                    if (err) {
-                        console.log('ERROR GETTING PLAYERS LEDGER');
-                        res.status(500).json({error: err});
-                    } else {
-                        console.log('SUCCESS GETTING PLAYERS LEDGER');
-                        res.status(200).json(playersledger);
-                    }
-
-                })
+            Tournament.find({$and: [{end: {$gte: Date()}}, {start: {$lte: Date()}}]}, function (err, tournaments) {
+                       let ids = tournaments.map(function(tournament) { return tournament._id; });
+                       PlayersLedger.find({_tournament: {$in: ids}}).populate(populateQuery).exec(function(err, playersledger) {
+                           if (err) {
+                               console.log('ERROR GETTING PLAYER LEDGER');
+                               res.status(500).json({error: err});
+                           } else {
+                               console.log('SUCCESS GETTING PLAYER LEDGER');
+                               res.status(200).json(playersledger);
+                           }
+                       });
+            })
         })
-        //     Tournament.find({$and: [{end: {$gte: Date()}}, {start: {$lte: Date()}}]}).populate({path: '_tournament_master'}).exec(function (err, tournament) {
-        //         if(err){
-        //             res.status(500).json({error: err})
-        //         }
-        //         else{
-        //             (()=>{
-        //                 let arr = [];
-        //                 let itemsProcessed = 0;
-        //                 tournament.forEach((tournament,index,tournaments) => {
-        //                     PlayersLedger.find({_tournament: tournament._id}).populate(populateQuery).exec(function (err, tournamentTeams) {
-        //                         if (err) {
-        //                             console.log('ERROR GETTING TOURNAMENTS TEAMS: ');
-        //                             res.status(500).json({error: err});
-        //                         } else {
-        //                             itemsProcessed++;
-        //                             if(itemsProcessed === tournaments.length ) {
-        //                                 console.log('SUCCESS GETTING TOURNAMENTS TEAMS');
-        //                                 res.status(200).json(arr);
-        //                             }
-        //                             arr.push(tournamentTeams);
-        //                             console.log(arr);
-        //                         }
-        //                     });
-        //                 });
-        //
-        //             })();
-        //
-        //             //     .then(arr =>{
-        //             //     console.log('SUCCESS GETTING TOURNAMENTS TEAMS');
-        //             //     res.status(200).json(arr);
-        //             //     }
-        //             // );
-        //
-        //
-        //
-        //
-        //
-        //
-        //         }
-        //     })
-        // })
 };
