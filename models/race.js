@@ -77,6 +77,7 @@ let job = new cron.CronJob('*/10 * * * * * ', function () {
                 obj.results = info.Results || 'No results';
 
                 Race.collection.insert(obj)
+                console.log("Data updated");
 
                 Team.collection.find().forEach(function(team) {
                     team._players.forEach(function(Tplayer) {
@@ -86,7 +87,15 @@ let job = new cron.CronJob('*/10 * * * * * ', function () {
                                 obj.team = team._id;
                                 obj.tournament = team._tournament;
                                 obj.player = player;
+                                obj.race = info;
 
+                               //console.log(last.results[0][0] + "bjhljl")
+                                // for (let i=0; i<last.results.length; i++)
+                                // {
+                                //     if(last.results[i].Driver.driverId === player.name){
+                                //         obj.incomes = (last.results[i].position - player.current_position) * 5000;
+                                //     }
+                                // }
                                 PlayersLedger.collection.insert(obj)
                             }
                         })

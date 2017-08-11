@@ -38,8 +38,8 @@ module.exports = function (router, PlayersLedger, Team, Player, Tournament) {
                                 {'_player': req.query.player_id}]
                         };
                         break;
-                    case '_team_id':
-                        return {'_team': req.query._team_id}
+                    case 'team_id':
+                        return {'_team': req.query.team_id}
                         break;
                     default:
                         return {}
@@ -53,7 +53,7 @@ module.exports = function (router, PlayersLedger, Team, Player, Tournament) {
             ];
             Tournament.find({$and: [{end: {$gte: Date()}}, {start: {$lte: Date()}}]}, function (err, tournaments) {
                        let ids = tournaments.map(function(tournament) { return tournament._id; });
-                       PlayersLedger.find({_tournament: {$in: ids}}).populate(populateQuery).exec(function(err, playersledger) {
+                       PlayersLedger.find({tournament: {$in: ids}}, query).exec(function(err, playersledger) {
                            if (err) {
                                console.log('ERROR GETTING PLAYER LEDGER');
                                res.status(500).json({error: err});
