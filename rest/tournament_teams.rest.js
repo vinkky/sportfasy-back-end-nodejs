@@ -11,7 +11,7 @@ module.exports = function (router, TournamentTeams, Team, User, Tournament) {
                     console.log('ERROR ADDING TEAM TO TOURNAMENT: ' + err);
                     res.status(500).json({error: err});
                 } else {
-                    console.log('SUCCESS ADDING TEAM TO TOURNAMENT: ' + tournament_teams);
+                    console.log('SUCCESS ADDING TEAM TO TOURNAMENT: ');
                     res.status(200).json({message: 'SUCCESS ADDING TEAM TO TOURNAMEN', tournament_teams});
                 }
             });
@@ -29,11 +29,11 @@ module.exports = function (router, TournamentTeams, Team, User, Tournament) {
                     case 'teamMaster':
                         return {_team_master: req.query.teamMaster};
                         break;
-                    default: //sita case tik bus ne gte o ktias
+                    default:
                         return {};
                 }
             }();
-            TournamentTeams.find(query).populate('_team').populate('_tournament').exec(function (err, tournamentTeams) {
+            TournamentTeams.find(query).populate('_team').populate('_tournament').populate('_team_master').exec(function (err, tournamentTeams) {
                 if (err) {
                     console.log('ERROR GETTING TOURNAMENTS TEAMS: ');
                     res.status(500).json({error: err});
