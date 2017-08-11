@@ -90,7 +90,7 @@ app.use('/api', router);
 
 require('./rest/tournament.rest.js')(router, Tournament,User);
 require('./rest/tournament_teams.rest.js')(router, TournamentTeams,Team);
-require('./rest/players_ledger_rest.js')(router, PlayersLedger,Team);
+require('./rest/players_ledger_rest.js')(router, PlayersLedger, Team, Player, Tournament);
 
 require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 
@@ -101,6 +101,8 @@ require('./rest/player.rest.js')(router, Player);
 require('./rest/race.rest.js')(router, Race);
 
 require('./rest/userledger.rest.js')(router, UserLedger);
+
+require('./rest/tournament.rest.js')(router, Tournament);
 
 router.route('/login')
     .post(function (req, res) {

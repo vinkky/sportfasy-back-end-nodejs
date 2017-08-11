@@ -6,6 +6,7 @@ let playersLedgerSchema = new Schema({
     _team: { type: Schema.ObjectId, ref: 'Team'},
     _player: { type: Schema.ObjectId, ref: 'Player'},
     _total_income: {type: Number},
+    _race: { type: Schema.ObjectId, ref: 'Race'},
     created_at: Date,
     updated_at: Date
 });
