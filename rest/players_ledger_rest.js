@@ -58,6 +58,7 @@ module.exports = function (router, PlayersLedger, Team, Player, Tournament) {
                                console.log('ERROR GETTING PLAYER LEDGER');
                                res.status(500).json({error: err});
                            } else {
+                                playersledger.team.forEach((item)=>{console.log("raceeeee " + item)})
                                console.log('SUCCESS GETTING PLAYER LEDGER');
                                res.status(200).json(playersledger);
                            }
