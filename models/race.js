@@ -4,8 +4,9 @@ let fetch = require('node-fetch');
 let cron = require('cron');
 
 let Player = require('./player');
-let Team = require('./teams')
+let Team = require('./teams');
 let PlayersLedger = require('./players_ledger');
+let PlayerLedgerSrv =  require('../services/player_ledger.srv')();
 
 let raceSchema = new Schema({
     season: {type: Number},
@@ -23,21 +24,7 @@ let year = new Date().getFullYear();
 //API url
 let url = 'http://ergast.com/api/f1/' + year + '/results.json?limit=9000000';
 
-let getPlayersPrice = function (players_count,
-                                total_players_sum,
-                                position) {
 
-    return total_players_sum - (total_players_sum / players_count) * (position - 1);
-};
-
-let countIncomesIncludingPreviousPosition = function (players_count,
-                                                      total_players_sum,
-                                                      position,
-                                                      previous_position) {
-
-    return getPlayersPrice(players_count, total_players_sum, position) * 0.1 * (previous_position - position);
-
-};
 
 //If DB empty, fetch data
 
@@ -92,31 +79,11 @@ let job = new cron.CronJob('*/10 * * * * * ', function () {
                 obj.results = last_race.Results || 'No results';
 
                let inserted_race= Race.collection.insert(obj).then(inserted => {
-
-                   Team.collection.find().forEach(function(team) {
-                       team._players.forEach(function(Tplayer) {
-                           Player.collection.find({_id: Tplayer}).forEach(function (player) {
-                               {
-                                   let obj = {}
-                                   obj.team = team._id;
-                                   obj.tournament = team._tournament;
-                                   obj.player = player._id;
-                                   obj.race = inserted.ops[0]._id;
-                                   let previous_race_pos = 10;
-
-                                   last_race.Results.map(result => {
-                                       if(result.Driver.givenName === player.name){
-                                           obj.incomes = countIncomesIncludingPreviousPosition(20,100000,player.current_position,previous_race_pos)
-                                       }
-                                   })
+                   Player.count(function (err, players_count) {
+                       new PlayerLedgerSrv(inserted,players_count).insertPlayerIncomes();
+                   });
 
 
-                                   PlayersLedger.collection.insert(obj)
-                               }
-                           })
-                       })
-
-                   })
                });
                 console.log("Data updated");
             }
