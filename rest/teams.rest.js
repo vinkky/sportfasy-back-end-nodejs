@@ -1,4 +1,4 @@
-module.exports = function (router, Team) {
+module.exports = function (router, Team,PlayersLedger) {
     router.route('/teams')
         .post(function (req, res) {
             Team.findOne({name: req.body.name}, function (err, team) {
@@ -32,13 +32,25 @@ module.exports = function (router, Team) {
         })
         //Get all teams
         .get(function (req, res) {
-            Team.find().populate('_players').populate('_team_master').exec(function (err, team) {
+            Team.find().populate('_players').populate('_team_master').exec(function (err, teams) {
                 if (err) {
                     console.log('ERROR GETTING TEAMS: ');
                     res.status(500).json({error: err});
                 } else {
                     console.log('SUCCESS GETTING TEAMS');
-                    res.status(200).json(team);
+
+                    teams.forEach((team)=>{
+                        PlayersLedger.aggregate([
+                            {$match: [{_team:team._id}]},
+                            {$group:{$sum: '$incomes'}}
+                        ],(result)=>{
+                            team.total_incomes=result;
+                            console.log(JSON.stringify(team,null,2))
+
+                        })
+
+                    },res.status(200).json(teams));
+
                 }
             });
         })
