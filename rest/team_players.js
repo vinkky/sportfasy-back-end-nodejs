@@ -33,8 +33,7 @@ module.exports = function (router, TeamPlayers, Team, Player) {
             }();
             let populateQuery = [
                 {path: '_team', populate: [{path: '_team_master'}, {path: '_players'}]},
-                {path: '_player'}
-            ];
+                {path: '_player'}    ];
             TeamPlayers.find(query).populate(populateQuery).exec(function (err, teamPlayers) {
                 if (err) {
                     console.log('ERROR GETTING TEAM PLAYERS: ');

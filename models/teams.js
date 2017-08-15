@@ -7,6 +7,7 @@ let teamSchema = new Schema({
     _tournament: {type: Schema.ObjectId, ref: 'Tournament'},
     _players: [{type: [Schema.ObjectId], ref: 'Player'}],
     user_points_converted: {type: Boolean},
+    total_incomes: {type: Number},
     created_at: Date,
     updated_at: Date
 });

@@ -11,7 +11,8 @@ let playerSchema = new Schema({
     real_team: {type: String},
     eff_points: {type: Number},
     current_position: {type: Number},
-    price: {type: Number}
+    price: {type: Number},
+    total_incomes: {type: Number}
 });
 
 //create model for player

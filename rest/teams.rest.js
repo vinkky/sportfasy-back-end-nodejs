@@ -1,4 +1,4 @@
-module.exports = function (router, Team,PlayersLedger) {
+module.exports = function (router, Team, PlayersLedger) {
     router.route('/teams')
         .post(function (req, res) {
             Team.findOne({name: req.body.name}, function (err, team) {
@@ -20,7 +20,7 @@ module.exports = function (router, Team,PlayersLedger) {
                         } else {
                             console.log('SUCCESS CREATING TEAM: ' + team.name);
 
-                            res.status(200).json({message: 'Team created!',team: team});
+                            res.status(200).json({message: 'Team created!', team: team});
 
                         }
                     });
@@ -39,18 +39,73 @@ module.exports = function (router, Team,PlayersLedger) {
                 } else {
                     console.log('SUCCESS GETTING TEAMS');
 
-                    teams.forEach((team)=>{
-                        PlayersLedger.aggregate([
-                            {$match: [{_team:team._id}]},
-                            {$group:{$sum: '$incomes'}}
-                        ],(result)=>{
-                            team.total_incomes=result;
-                            console.log(JSON.stringify(team,null,2))
+                    let team_promise = teams.map((team) => {
 
-                        })
+                        return new Promise((resolve, reject) => {
 
-                    },res.status(200).json(teams));
+                             PlayersLedger.find({'_team': team._id}).exec(function (err, ledger_entries) {
+                                if (err) {
+                                    console.log('ERROR GETTING team incomes in ledger: ');
+                                } else {
 
+                                    if (ledger_entries.length !== 0) {
+                                        team.total_incomes = ledger_entries.reduce((sum, entry) => {
+                                            return sum + entry._total_income
+                                        }, 0);
+                                        // console.log(team);
+
+                                        // console.log(team.name + 'alfa');
+
+
+
+                                    }
+
+                                }
+
+
+                            }).then(() => {
+
+                                 let players_promise = team._players.map((player)=>{
+
+
+                                     return new Promise((resolve, reject) => {
+                                         PlayersLedger.find({$and: [{'_team': team._id}, {'_player': player._id}]}).exec(function (err, ledger_entries) {
+                                             if (err) {
+                                                 console.log('ERROR GETTING player incomes in ledger: ');
+                                             } else {
+
+                                                 if (ledger_entries.length !== 0) {
+                                                     player.total_incomes = ledger_entries.reduce((sum, entry) => {
+                                                         return sum + entry._total_income
+                                                     }, 0);
+                                                     console.log(player);
+                                                     // console.log(team.name + 'alfa');
+
+                                                 }
+                                             }
+                                         }).then(() => {
+                                             resolve()
+                                         });
+                                     });
+
+                                 });
+
+
+                                 Promise.all(players_promise).then(() => {
+                                     console.log(JSON.stringify(teams, null, 2));
+                                     resolve();
+                                 });
+                                // console.log(team.name + 'beta');
+
+
+                            });
+
+                        });
+
+                        // console.log('response')
+                    });
+                    Promise.all(team_promise).then(() => console.log(JSON.stringify(teams, null, 2)));
+                    // res.status(200).json(teams);
                 }
             });
         })
@@ -100,7 +155,7 @@ module.exports = function (router, Team,PlayersLedger) {
         });
 
     router.route('/teams/:name')
-    // get team by name (accessed at GET http://localhost:3000/api/teams/:name)
+        // get team by name (accessed at GET http://localhost:3000/api/teams/:name)
         .get(function (req, res) {
             Team.find({name: req.params.name}).populate('_players').populate('_team_master').exec(function (err, team) {
                 if (err) {
