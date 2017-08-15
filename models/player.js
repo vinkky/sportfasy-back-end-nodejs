@@ -4,6 +4,7 @@ let fetch = require('node-fetch');
 let cron = require('cron');
 
 let playerSchema = new Schema({
+    _id  :[{ type: Schema.Types.ObjectId, ref: 'Team' }],
     name: {type: String},
     surname: {type: String},
     age: {type: Number},

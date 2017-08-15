@@ -33,7 +33,12 @@ module.exports = function (router, TournamentTeams, Team, User, Tournament) {
                         return {};
                 }
             }();
-            TournamentTeams.find(query).populate('_team').populate('_tournament').populate('_team_master').exec(function (err, tournamentTeams) {
+               let populateQuery = [
+                {path: '_team',populate:[{path: '_players'}]}, 
+                 {path: '_tournament'},
+                  {path: '_team_master'}
+            ];
+            TournamentTeams.find(query).populate(populateQuery).exec(function (err, tournamentTeams) {
                 if (err) {
                     console.log('ERROR GETTING TOURNAMENTS TEAMS: ');
                     res.status(500).json({error: err});
