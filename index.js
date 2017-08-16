@@ -14,6 +14,7 @@ let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 let cors = require('cors');
 let config = require('./config.js').get(process.env.NODE_ENV);
+let TeamsService =  require('./services/teams.srv')();
 
 // allow cross domain connection
 app.use(cors());
@@ -94,7 +95,7 @@ require('./rest/players_ledger_rest.js')(router, PlayersLedger, Team, Player, To
 
 require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 
-require('./rest/teams.rest.js')(router, Team,PlayersLedger);
+require('./rest/teams.rest.js')(router, Team,PlayersLedger,TeamsService);
 
 require('./rest/player.rest.js')(router, Player);
 
