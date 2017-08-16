@@ -1,18 +1,12 @@
 module.exports = function (router, PlayersLedger, Team, Player, Tournament) {
     router.route('/tournament/players_ledger/:tournament_id?/:team_id?/:player_id?')
         .post(function (req, res) {
-            let populateQuery = [
-                {path: '_tournament', match: {type: start}, populate: {path: '_tournament_master'}},
-                {path: '_team', populate: [{path: '_team_master'}, {path: '_players'}]},
-                {path: '_player'},
-                {path: '_race'}
-            ];
             let playersLedger = new PlayersLedger({
                 _tournament: req.body.tournament_id,
                 _team: req.body.team_id,
                 _player: req.body.player_id,
                 _total_income: req.body.total_income,
-                _race: req.body.race,
+                _race: req.body.race || null,
             });
 
             playersLedger.save(function (err) {
@@ -24,7 +18,6 @@ module.exports = function (router, PlayersLedger, Team, Player, Tournament) {
                     res.status(200).json({message: 'SUCCESS ADDING Income to Player Ledger:', playersLedger});
                 }
             });
-            PlayersLedger.find({}).populate(populateQuery).exec(function (err, tournamentTeams){});
         })
         //returns teurnaments and teams by team id or by tournament id respectively
         .get(function (req, res) {

@@ -1,4 +1,4 @@
-module.exports = function (router, TournamentTeams, Team, User, Tournament) {
+module.exports = function (router, TournamentTeams, Team, TeamsService) {
     router.route('/tournament/teams/:_tournament_id?')
         .post(function (req, res) {
             let tournament_teams = new TournamentTeams({
@@ -33,17 +33,17 @@ module.exports = function (router, TournamentTeams, Team, User, Tournament) {
                         return {};
                 }
             }();
-               let populateQuery = [
-                {path: '_team',populate:[{path: '_players'}]}, 
-                 {path: '_tournament'},
-                  {path: '_team_master'}
+            let populateQuery = [
+                {path: '_team', populate: [{path: '_players'}]},
+                {path: '_tournament'},
+                {path: '_team_master'}
             ];
             TournamentTeams.find(query).populate(populateQuery).exec(function (err, tournamentTeams) {
                 if (err) {
                     console.log('ERROR GETTING TOURNAMENTS TEAMS: ');
                     res.status(500).json({error: err});
                 } else {
-                    console.log('SUCCESS GETTING TOURNAMENTS TEAMS' + tournamentTeams);
+                    console.log('SUCCESS GETTING TOURNAMENTS TEAMS');
                     res.status(200).json(tournamentTeams);
                 }
             });

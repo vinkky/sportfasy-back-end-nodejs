@@ -1,4 +1,4 @@
-module.exports = function (router, Team, PlayersLedger,TeamsService) {
+module.exports = function (router, Team, PlayersLedger, TeamsService) {
     router.route('/teams')
         .post(function (req, res) {
             Team.findOne({name: req.body.name}, function (err, team) {

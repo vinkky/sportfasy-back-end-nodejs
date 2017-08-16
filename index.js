@@ -89,8 +89,8 @@ app.listen(config.port, function () {
 app.use('/api', router);
 // ======================================================
 
-require('./rest/tournament.rest.js')(router, Tournament,User);
-require('./rest/tournament_teams.rest.js')(router, TournamentTeams,Team);
+require('./rest/tournament.rest.js')(router, Tournament,User,TournamentTeams,TeamsService);
+require('./rest/tournament_teams.rest.js')(router, TournamentTeams,Team,TeamsService);
 require('./rest/players_ledger_rest.js')(router, PlayersLedger, Team, Player, Tournament);
 
 require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));

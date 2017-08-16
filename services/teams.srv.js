@@ -46,7 +46,7 @@ module.exports = function (teams) {
 
                     });
                     Promise.all(players_promise).then(() => {
-                        console.log(JSON.stringify(teams, null, 2));
+                        // console.log(JSON.stringify(teams, null, 2));
                         resolve();
                     });
                 });
