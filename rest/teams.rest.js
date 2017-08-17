@@ -1,5 +1,5 @@
 module.exports = function (router, Team, PlayersLedger, TeamsService) {
-    router.route('/teams')
+    router.route('/teams/:team_id?')
         .post(function (req, res) {
             Team.findOne({name: req.body.name}, function (err, team) {
                 if (!team) {
@@ -32,21 +32,43 @@ module.exports = function (router, Team, PlayersLedger, TeamsService) {
         })
         //Get all teams
         .get(function (req, res) {
-            Team.find().populate('_players').populate('_team_master').exec(function (err, teams) {
-                if (err) {
-                    console.log('ERROR GETTING TEAMS: ');
-                    res.status(500).json({error: err});
-                } else {
-                    console.log('SUCCESS GETTING TEAMS');
+            (function () {
+                switch (String(Object.keys(req.query).sort())) {
+                    case 'team_id':
+                        PlayersLedger.find({'_team': req.query.team_id}).exec(function (err, ledger_entries) {
+                            if (err) {
+                                console.log('ERROR GETTING team incomes in ledger: ');
+                            } else {
 
-                    let team_promise = new TeamsService(teams).get_team_promise();
-
-                    Promise.all(team_promise).then(() => {
-                        console.log(JSON.stringify(teams, null, 2));
-                        res.status(200).json(teams);
-                    });
+                                if (ledger_entries.length !== 0) {
+                                    total_income = ledger_entries.reduce((sum, entry) => {
+                                        return sum + entry._total_income
+                                    }, 0);
+                                    res.status(200).json({
+                                        "team_id": req.query.team_id,
+                                        "total_income": total_income
+                                    });
+                                }
+                            }
+                        });
+                        break;
+                    default:
+                        Team.find().populate('_players').populate('_team_master').exec(function (err, teams) {
+                            if (err) {
+                                console.log('ERROR GETTING TEAMS: ');
+                                res.status(500).json({error: err});
+                            } else {
+                                console.log('SUCCESS GETTING TEAMS');
+                                res.status(200).json(teams);
+                            }
+                        });
                 }
-            });
+            })();
+
+
+
+
+
         })
 
         //Update team
