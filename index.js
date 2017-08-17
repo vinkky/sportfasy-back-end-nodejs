@@ -15,6 +15,7 @@ let jwt = require('jsonwebtoken');
 let cors = require('cors');
 let config = require('./config.js').get(process.env.NODE_ENV);
 let TeamsService =  require('./services/teams.srv')();
+var assert = require('assert');
 
 // allow cross domain connection
 app.use(cors());
@@ -23,10 +24,12 @@ app.use(cors());
 // MONGO DB
 // ======
 
+
+
 let mongoose = require('mongoose');
 mongoose.connect(config.database);
 
-
+mongoose.Promise = global.Promise;
 // ======
 // ROUTES
 // ======
