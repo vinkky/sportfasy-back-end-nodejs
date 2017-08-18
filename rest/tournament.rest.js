@@ -55,69 +55,18 @@ module.exports = function (router, Tournament, User, TournamentTeams, TeamsServi
             }();
 
             let populateQuery = [
-                {path: '_team_master'}
+                {path: '_tournament_master'},
+                {path: '_users'}
             ];
             Tournament.find(query).populate(populateQuery).exec(function (err, tournaments) {
                 if (err) {
                     console.log('ERROR GETTING TOURNAMENTS: ');
                     res.status(500).json({error: err});
-                }
-            }).then((tournaments => {
-                tournament_prom = tournaments.map((tournament) => {
+                }else{
 
-                    return new Promise((resolve, reject) => {
-
-                        let populateQuery = [
-                            {path: '_team', populate: [{path: '_players'}, {path: '_team_master'}]},
-
-                        ];
-
-                        TournamentTeams.find({_tournament: tournament._id}).populate(populateQuery).exec(function (err, tournamentTeams) {
-                            if (err) {
-                                console.log('ERROR GETTING TOURNAMENTS TEAMS: ');
-                                res.status(500).json({error: err});
-                            }
-                            else {
-                                // console.log('SUCCESS GETTING TOURNAMENTS TEAMS');
-                                if (tournamentTeams.length !== 0) {
-                                    tournament._teams = tournamentTeams.map(tournamentTeam => {
-                                        // console.log(tournamentTeam._team);
-                                        return tournamentTeam._team;
-                                    });
-
-
-                                    // console.log(JSON.stringify(tournament._teams,null,2));
-                                } else {
-                                    tournament._teams = [];
-                                }
-
-                                // return tournament;
-                            }
-                        }).then(() => {
-                                // console.log('resolved tournament teams' + JSON.stringify(tournament,null,2) );
-                                let team_promise = new TeamsService(tournament._teams).get_team_promise();
-
-                                Promise.all(team_promise).then(() => {
-                                    // console.log(JSON.stringify(teams, null, 2));
-                                    resolve();
-                                });
-                            }
-                        );
-
-                    });
-
-
-                });
-
-                Promise.all(tournament_prom).then(() => {
-                    console.log('resolved all tpournament teams' + JSON.stringify(tournaments,null,2));
-                    console.log('done');
-                    // return resolve();
                     res.status(200).json(tournaments);
-
-                });
-
-            }));
+                }
+            })
         })
         // update tournament
         .put(function (req, res) {
