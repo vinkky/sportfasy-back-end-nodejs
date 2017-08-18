@@ -35,9 +35,10 @@ module.exports = function (router, Team, PlayersLedger, TeamsService) {
             (function () {
                 switch (String(Object.keys(req.query).sort())) {
                     case 'team_id':
-                        PlayersLedger.find({'_team': req.query.team_id}).exec(function (err, ledger_entries) {
+                        PlayersLedger.find({'_team': req.query.team_id || 0}).exec(function (err, ledger_entries) {
                             if (err) {
                                 console.log('ERROR GETTING team incomes in ledger: ');
+                                res.status(500).json({error: err});
                             } else {
 
                                 if (ledger_entries.length !== 0) {
