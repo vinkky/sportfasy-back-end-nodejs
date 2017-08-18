@@ -65,11 +65,6 @@ module.exports = function (router, Team, PlayersLedger, TeamsService) {
                         });
                 }
             })();
-
-
-
-
-
         })
 
         //Update team
