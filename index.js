@@ -98,7 +98,7 @@ require('./rest/players_ledger_rest.js')(router, PlayersLedger, Team, Player, To
 
 require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 
-require('./rest/teams.rest.js')(router, Team,PlayersLedger,TeamsService);
+require('./rest/teams.rest.js')(router, Team,PlayersLedger,TournamentTeams);
 
 require('./rest/player.rest.js')(router, Player);
 

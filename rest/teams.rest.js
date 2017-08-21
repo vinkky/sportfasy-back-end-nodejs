@@ -1,4 +1,5 @@
-module.exports = function (router, Team, PlayersLedger, TeamsService) {
+module.exports = function (router, Team, PlayersLedger, TournamentTeams) {
+    const mongoose = require('mongoose');
     router.route('/teams/:team_id?')
         .post(function (req, res) {
             Team.findOne({name: req.body.name}, function (err, team) {
@@ -35,22 +36,73 @@ module.exports = function (router, Team, PlayersLedger, TeamsService) {
             (function () {
                 switch (String(Object.keys(req.query).sort())) {
                     case 'team_id':
-                        PlayersLedger.find({'_team': req.query.team_id}).exec(function (err, ledger_entries) {
-                            if (err) {
-                                console.log('ERROR GETTING team incomes in ledger: ');
-                            } else {
 
-                                if (ledger_entries.length !== 0) {
-                                    total_income = ledger_entries.reduce((sum, entry) => {
-                                        return sum + entry._total_income
-                                    }, 0);
-                                    res.status(200).json({
-                                        "team_id": req.query.team_id,
-                                        "total_income": total_income
-                                    });
+                        TournamentTeams.aggregate([
+                                {$match: {"_team": new mongoose.Types.ObjectId(req.query.team_id)} },
+                                {
+                                    $lookup: {
+                                        from: "playersledgers",
+                                        localField: "_team",
+                                        foreignField: "_team",
+                                        as: "_team_ledger"
+                                    }
+                                },
+                                {$unwind: "$_team_ledger"},
+                                {
+                                    $group: {
+                                        _id: "$_id",
+                                        _team: { $first: "$_team" },
+                                        _tournament:{$first: "$_tournament"},
+                                        team_total: {$sum: "$_team_ledger._total_income"},
+                                    }
+                                },
+                                {$unwind: "$_tournament"},
+                                {$sort:{tournament:1, team_total:-1,}},
+                                {
+                                    $lookup: {
+                                        from: "teams",
+                                        localField: "_team",
+                                        foreignField: "_id",
+                                        as: "_team"
+                                    }
+                                },
+                                {$unwind: "$_team"},
+                                {$unwind: "$_team._players"},
+                                {
+                                    $lookup: {
+                                        from: "players",
+                                        localField: "_team._players",
+                                        foreignField: "_id",
+                                        as: "_team._players",
+                                    }
+                                },
+                                {
+                                    $group: {
+                                        _id: {_team:"$_team",_player:"$_players"},
+                                        _id_doc: { "$first": "$_id" },
+                                        _tournament:{$first: "$_tournament"},
+                                        team_total: {$first: "$team_total"},
+                                    }
+                                },
+                                {
+                                    $group: {
+                                        _id: "$_id_doc",
+                                        _id_doc: { "$first": "$_id" },
+                                        _tournament:{$first: "$_tournament"},
+                                        team_total: {$first: "$team_total"},
+                                    }
+                                },
+                                // {$unwind:"$_team._players"},
+
+                            ],
+                            function (err, tournaments) {
+                                if (err) {
+                                    console.log('error grouping teams in Player Ledger ');
+                                } else {
+                                    console.log(JSON.stringify(tournaments,null,2));
                                 }
                             }
-                        });
+                        )
                         break;
                     default:
                         Team.find().populate('_players').populate('_team_master').exec(function (err, teams) {
@@ -64,9 +116,6 @@ module.exports = function (router, Team, PlayersLedger, TeamsService) {
                         });
                 }
             })();
-
-
-
 
 
         })
