@@ -33,89 +33,57 @@ module.exports = function (router, Team, PlayersLedger, TournamentTeams) {
         })
         //Get all teams
         .get(function (req, res) {
-            (function () {
+
+            let query =(function() {
                 switch (String(Object.keys(req.query).sort())) {
                     case 'team_id':
-
-                        TournamentTeams.aggregate([
-                                {$match: {"_team": new mongoose.Types.ObjectId(req.query.team_id)} },
-                                {
-                                    $lookup: {
-                                        from: "playersledgers",
-                                        localField: "_team",
-                                        foreignField: "_team",
-                                        as: "_team_ledger"
-                                    }
-                                },
-                                {$unwind: "$_team_ledger"},
-                                {
-                                    $group: {
-                                        _id: "$_id",
-                                        _team: { $first: "$_team" },
-                                        _tournament:{$first: "$_tournament"},
-                                        team_total: {$sum: "$_team_ledger._total_income"},
-                                    }
-                                },
-                                {$unwind: "$_tournament"},
-                                {$sort:{tournament:1, team_total:-1,}},
-                                {
-                                    $lookup: {
-                                        from: "teams",
-                                        localField: "_team",
-                                        foreignField: "_id",
-                                        as: "_team"
-                                    }
-                                },
-                                {$unwind: "$_team"},
-                                {$unwind: "$_team._players"},
-                                {
-                                    $lookup: {
-                                        from: "players",
-                                        localField: "_team._players",
-                                        foreignField: "_id",
-                                        as: "_team._players",
-                                    }
-                                },
-                                {
-                                    $group: {
-                                        _id: {_team:"$_team",_player:"$_players"},
-                                        _id_doc: { "$first": "$_id" },
-                                        _tournament:{$first: "$_tournament"},
-                                        team_total: {$first: "$team_total"},
-                                    }
-                                },
-                                {
-                                    $group: {
-                                        _id: "$_id_doc",
-                                        _id_doc: { "$first": "$_id" },
-                                        _tournament:{$first: "$_tournament"},
-                                        team_total: {$first: "$team_total"},
-                                    }
-                                },
-                                // {$unwind:"$_team._players"},
-
-                            ],
-                            function (err, tournaments) {
-                                if (err) {
-                                    console.log('error grouping teams in Player Ledger ');
-                                } else {
-                                    console.log(JSON.stringify(tournaments,null,2));
-                                }
-                            }
-                        )
+                        return {"_team": new mongoose.Types.ObjectId(req.query.team_id)}
                         break;
                     default:
-                        Team.find().populate('_players').populate('_team_master').exec(function (err, teams) {
-                            if (err) {
-                                console.log('ERROR GETTING TEAMS: ');
-                                res.status(500).json({error: err});
-                            } else {
-                                console.log('SUCCESS GETTING TEAMS');
-                                res.status(200).json(teams);
-                            }
-                        });
+                        return {}
                 }
             })();
+
+            let populateQuery = [{path: '_team', populate: [{path: '_players'},{path: '_team_master'}]}];
+            // let populateQuery = [];
+
+
+            TournamentTeams.aggregate([
+                    {$match: query},
+                    {
+                        $lookup: {
+                            from: "playersledgers",
+                            localField: "_team",
+                            foreignField: "_team",
+                            as: "_team_ledger"
+                        }
+                    },
+                    {$unwind: "$_team_ledger"},
+                    {
+                        $group: {
+                            _id: "$_id",
+                            _team: { $first: "$_team" },
+                            _tournament:{$first: "$_tournament"},
+                            team_total: {$sum: "$_team_ledger._total_income"},
+                        }
+                    },
+                    {$sort:{tournament:1, team_total:-1,}},
+
+                ],
+                function (err, tournaments) {
+                    if (err) {
+                        console.log('error grouping teams in Player Ledger ');
+                    } else {
+                        TournamentTeams.populate(
+                            tournaments,populateQuery, function(err,results) {
+                                if (err) throw err;
+                                console.log( JSON.stringify( results, undefined, 2 ) );
+                                console.log('good');
+                                return res.send(results);
+                            });
+                    }
+                }
+            )
 
 
         })

@@ -1,5 +1,6 @@
 module.exports = function (router, Tournament, User, TournamentTeams, TeamsService) {
-    router.route('/tournaments/:userID?/:tournamentMaster?/:name?')
+    const mongoose = require('mongoose');
+    router.route('/tournaments/:userID?/:tournamentMaster?/:name?/:tournament_id?')
         // add new tournament
         .post(function (req, res) {
             Tournament.findOne({name: req.body.name}, function (err, tournament) {
@@ -55,69 +56,81 @@ module.exports = function (router, Tournament, User, TournamentTeams, TeamsServi
             }();
 
             let populateQuery = [
-                {path: '_team_master'}
+                {path: '_tournament_master'},
+                {path: '_users'}
             ];
-            Tournament.find(query).populate(populateQuery).exec(function (err, tournaments) {
-                if (err) {
-                    console.log('ERROR GETTING TOURNAMENTS: ');
-                    res.status(500).json({error: err});
-                }
-            }).then((tournaments => {
-                tournament_prom = tournaments.map((tournament) => {
 
-                    return new Promise((resolve, reject) => {
+            let getTournaments = function () {
+                Tournament.find(query).populate(populateQuery).exec(function (err, tournaments) {
+                    if (err) {
+                        console.log('ERROR GETTING TOURNAMENTS: ');
+                        res.status(500).json({error: err});
+                    } else {
 
-                        let populateQuery = [
-                            {path: '_team', populate: [{path: '_players'}, {path: '_team_master'}]},
+                        res.status(200).json(tournaments);
+                    }
+                });
+            }
 
-                        ];
 
-                        TournamentTeams.find({_tournament: tournament._id}).populate(populateQuery).exec(function (err, tournamentTeams) {
-                            if (err) {
-                                console.log('ERROR GETTING TOURNAMENTS TEAMS: ');
-                                res.status(500).json({error: err});
+            let populateTournament = [{path: '_team', populate: [{path: '_players'}, {path: '_team_master'}]}];
+
+            let getTournamentsTotal = function () {
+                TournamentTeams.aggregate([
+                        {$match: {"_tournament": new mongoose.Types.ObjectId(req.query.tournament_id)}},
+                        {
+                            $lookup: {
+                                from: "playersledgers",
+                                localField: "_team",
+                                foreignField: "_team",
+                                as: "_team_ledger"
                             }
-                            else {
-                                // console.log('SUCCESS GETTING TOURNAMENTS TEAMS');
-                                if (tournamentTeams.length !== 0) {
-                                    tournament._teams = tournamentTeams.map(tournamentTeam => {
-                                        // console.log(tournamentTeam._team);
-                                        return tournamentTeam._team;
-                                    });
-
-
-                                    // console.log(JSON.stringify(tournament._teams,null,2));
-                                } else {
-                                    tournament._teams = [];
-                                }
-
-                                // return tournament;
+                        },
+                        {
+                            $unwind: {
+                                $path: "$_team_ledger",
+                                "preserveNullAndEmptyArrays": true
                             }
-                        }).then(() => {
-                                // console.log('resolved tournament teams' + JSON.stringify(tournament,null,2) );
-                                let team_promise = new TeamsService(tournament._teams).get_team_promise();
+                        },
+                        {
+                            $group: {
+                                _id: "$_id",
+                                _team: {$first: "$_team"},
+                                _tournament: {$first: "$_tournament"},
+                                team_total: {$sum: "$_team_ledger._total_income"},
+                            }
+                        },
+                        {$sort: {tournament: 1, team_total: -1,}},
 
-                                Promise.all(team_promise).then(() => {
-                                    // console.log(JSON.stringify(teams, null, 2));
-                                    resolve();
+                    ],
+                    function (err, tournaments) {
+                        if (err) {
+                            console.log('error grouping teams in Player Ledger ');
+                        } else {
+                            TournamentTeams.populate(
+                                tournaments, populateTournament, function (err, results) {
+                                    if (err) throw err;
+                                    console.log(JSON.stringify(results, undefined, 2));
+                                    console.log('good');
+                                    return res.send(results);
                                 });
-                            }
-                        );
+                        }
+                    }
+                )
+            }
 
-                    });
+
+            let query_of_total = (function () {
+                switch (String(Object.keys(req.query).sort())) {
+                    case 'tournament_id':
+                        getTournamentsTotal();
+                        break;
+                    default:
+                        getTournaments();
+                }
+            })();
 
 
-                });
-
-                Promise.all(tournament_prom).then(() => {
-                    console.log('resolved all tpournament teams' + JSON.stringify(tournaments,null,2));
-                    console.log('done');
-                    // return resolve();
-                    res.status(200).json(tournaments);
-
-                });
-
-            }));
         })
         // update tournament
         .put(function (req, res) {
