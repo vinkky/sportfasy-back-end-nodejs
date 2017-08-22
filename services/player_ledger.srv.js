@@ -34,18 +34,44 @@ module.exports = function(lastRace, players_count){
                 Player.collection.find({_id: Tplayer}).forEach(function (player) {
                     {
                         let obj = {}
-                        obj.team = team._id;
-                        obj.tournament = team._tournament;
-                        obj.player = player._id;
-                        obj.race = that.lastRace._id;
+                        obj._team = team._id;
+                        obj._tournament = team._tournament;
+                        obj._player = player._id;
+                        obj._race = that.lastRace._id;
                         let previous_race_pos = 10;
+
+                        let playersLedger = new PlayersLedger({
+                            _tournament:  team._tournament,
+                            _team: team._id,
+                            _player: player._id,
+                            // _total_income: req.body.total_income,
+                            _race: that.lastRace._id,
+                        });
+
+
 
                         that.lastRace.results.map(result => {
                             if(result.Driver.givenName === player.name){
-                                obj.incomes = that.countIncomesIncludingPreviousPosition(player.current_position,previous_race_pos)
+                                playersLedger._total_income = that.countIncomesIncludingPreviousPosition(player.current_position,previous_race_pos);
+                                playersLedger.save(function (err) {
+                                    if (err) {
+                                        console.log('ERROR ADDING Income to Player Ledger: ' + err);
+                                        // res.status(500).json({error: err});
+                                    } else {
+                                        console.log('SUCCESS ADDING Income to Player Ledger:: ' + playersLedger);
+                                        // res.status(200).json({message: 'SUCCESS ADDING Income to Player Ledger:', playersLedger});
+                                    }
+                                });
                             }
                         })
-                        PlayersLedger.collection.insert(obj);
+                        // PlayersLedger.save(obj);
+
+
+
+
+
+
+
                     }
                 })
             })

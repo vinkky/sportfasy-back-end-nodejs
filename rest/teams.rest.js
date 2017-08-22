@@ -42,7 +42,7 @@ module.exports = function (router, Team, PlayersLedger, TournamentTeams,TeamsSer
                     default:
                         return new Array();
                 }
-            })();
+            })();gi
             new TeamsService().getTeamsTotal(query,res);
         })
 

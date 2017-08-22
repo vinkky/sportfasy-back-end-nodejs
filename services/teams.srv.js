@@ -65,7 +65,6 @@ module.exports = function (teams) {
                     }
                 },
                 {$sort: {tournament: 1, team_total: -1,}},
-
             ],
             function (err, teams) {
                 if (err) {
@@ -77,4 +76,3 @@ module.exports = function (teams) {
     }
     return TeamsService;
 }
-

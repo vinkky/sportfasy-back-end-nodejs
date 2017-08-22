@@ -67,8 +67,6 @@ module.exports = function (router, Tournament, User, TournamentTeams, Tournament
                         new TournamentService().getTournaments(Tournament,query,res);
                 }
             })();
-
-
         })
         // update tournament
         .put(function (req, res) {
