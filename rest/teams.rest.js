@@ -1,6 +1,6 @@
 module.exports = function (router, Team, PlayersLedger, TournamentTeams,TeamsService) {
     const mongoose = require('mongoose');
-    router.route('/teams/:team_id?')
+    router.route('/teams/:team_master_id?')
         .post(function (req, res) {
             Team.findOne({name: req.body.name}, function (err, team) {
                 if (!team) {
@@ -36,8 +36,8 @@ module.exports = function (router, Team, PlayersLedger, TournamentTeams,TeamsSer
 
             let query =(function() {
                 switch (String(Object.keys(req.query).sort())) {
-                    case 'team_id':
-                        return new Array(req.query.team_id);
+                    case 'team_master_id':
+                        return new Array(req.query.team_master_id);
                         break;
                     default:
                         return new Array();
