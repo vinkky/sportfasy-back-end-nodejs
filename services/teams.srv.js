@@ -3,22 +3,25 @@ module.exports = function (teams) {
     let TournamentTeams = require('../models/tournament_teams');
 
     let TeamsService = function (teams) {
-        this.teams = teams;
-        this.populateQuery = [{path: '_team', populate: [{path: '_players'},{path: '_team_master'}]}];
+        this.teams = new Array;
+        this.populateQuery = [{path: '_team', populate: [{path: '_players'},{path: '_team_master'}]},{path: '_tournament'}];
     }
 
-    TeamsService.prototype.addPosition = function (teams) {
-        this.teams = teams.map((team, arrIndex) => {
-            team.position = arrIndex + 1;
-            return team;
-        })
+    TeamsService.prototype.addPosition = function (tournaments) {
+            tournaments.forEach(tournament=>{
+                tournament._teams.forEach((team, arrIndex) => {
+                    team.position = arrIndex + 1;
+                    team._tournament = tournament._id;
+                    this.teams.push(team);
+                })
+            });
         return this;
     }
 
     TeamsService.prototype.getTargetTeams = function (target_ids) {
         if (target_ids.length !== 0) {
             this.teams = this.teams.filter((team) => {
-                if (target_ids.indexOf(team._team.toString()) !== -1) {
+                if (target_ids.indexOf(team._team_master.toString()) !== -1) {
                     console.log("target: " + team);
                     return team;
                 }
@@ -28,11 +31,11 @@ module.exports = function (teams) {
     }
 
     TeamsService.prototype.populateTeamsAndResponse = function (res) {
-        console.log(JSON.stringify(this.teams, undefined, 2));
+        // console.log(JSON.stringify(this.teams, undefined, 2));
         TournamentTeams.populate(
             this.teams, this.populateQuery, function (err, results) {
                 if (err) throw err;
-                // console.log(JSON.stringify(results, undefined, 2));
+                console.log(JSON.stringify(results, undefined, 2));
                 console.log('good');
                 return res.send(results);
             });
@@ -60,17 +63,42 @@ module.exports = function (teams) {
                     $group: {
                         _id: "$_id",
                         _team: {$first: "$_team"},
+                        _team_master: {$first:"$_team_master"},
                         _tournament: {$first: "$_tournament"},
                         team_total: {$sum: "$_team_ledger._total_income"},
                     }
                 },
-                {$sort: {tournament: 1, team_total: -1,}},
+
+                {
+                    $group: {
+                        _id: {
+                            _team: "$_team",
+                            team_total: "$team_total",
+                            _team_master:"$_team_master",
+                        },
+                        doc_id: {$first:  "$_tournament" },
+                    }
+                },
+                {$sort: { "_id.team_total": -1,}},
+                {
+                    $group: {
+                        _id: "$doc_id",
+                        _teams: {
+                            $push: {
+                                _team: "$_id._team",
+                                team_total: "$_id.team_total",
+                                _team_master:"$_id._team_master",
+                            },
+                        },
+
+                    }
+                },
             ],
-            function (err, teams) {
+            function (err, tournaments) {
                 if (err) {
                     console.log('error grouping teams in Player Ledger ');
                 } else {
-                    that.addPosition(teams).getTargetTeams(query).populateTeamsAndResponse(res);
+                    that.addPosition(tournaments).getTargetTeams(query).populateTeamsAndResponse(res);
                 }
             });
     }
