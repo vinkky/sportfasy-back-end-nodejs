@@ -1,4 +1,4 @@
-module.exports = function (router, Team, PlayersLedger, TournamentTeams) {
+module.exports = function (router, Team, PlayersLedger, TournamentTeams,TeamsService) {
     const mongoose = require('mongoose');
     router.route('/teams/:team_id?')
         .post(function (req, res) {
@@ -37,53 +37,19 @@ module.exports = function (router, Team, PlayersLedger, TournamentTeams) {
             let query =(function() {
                 switch (String(Object.keys(req.query).sort())) {
                     case 'team_id':
-                        return {"_team": new mongoose.Types.ObjectId(req.query.team_id)}
+                        // return {"_team": new mongoose.Types.ObjectId(req.query.team_id)}
+                        return new Array(req.query.team_id);
                         break;
                     default:
-                        return {}
+                        return new Array();
                 }
             })();
 
             let populateQuery = [{path: '_team', populate: [{path: '_players'},{path: '_team_master'}]}];
             // let populateQuery = [];
 
+            new TeamsService().getTeamsTotal(query,populateQuery,res);
 
-            TournamentTeams.aggregate([
-                    {$match: query},
-                    {
-                        $lookup: {
-                            from: "playersledgers",
-                            localField: "_team",
-                            foreignField: "_team",
-                            as: "_team_ledger"
-                        }
-                    },
-                    {$unwind: "$_team_ledger"},
-                    {
-                        $group: {
-                            _id: "$_id",
-                            _team: { $first: "$_team" },
-                            _tournament:{$first: "$_tournament"},
-                            team_total: {$sum: "$_team_ledger._total_income"},
-                        }
-                    },
-                    {$sort:{tournament:1, team_total:-1,}},
-
-                ],
-                function (err, tournaments) {
-                    if (err) {
-                        console.log('error grouping teams in Player Ledger ');
-                    } else {
-                        TournamentTeams.populate(
-                            tournaments,populateQuery, function(err,results) {
-                                if (err) throw err;
-                                console.log( JSON.stringify( results, undefined, 2 ) );
-                                console.log('good');
-                                return res.send(results);
-                            });
-                    }
-                }
-            )
 
 
         })

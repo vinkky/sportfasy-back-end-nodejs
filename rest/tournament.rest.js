@@ -73,7 +73,8 @@ module.exports = function (router, Tournament, User, TournamentTeams, TeamsServi
             }
 
 
-            let populateTournament = [{path: '_team', populate: [{path: '_players'}, {path: '_team_master'}]}];
+            // let populateTournament = [{path: '_team', populate: [{path: '_players'}, {path: '_team_master'}]}];
+            let populateTournament = [];
 
             let getTournamentsTotal = function () {
                 TournamentTeams.aggregate([
@@ -88,7 +89,7 @@ module.exports = function (router, Tournament, User, TournamentTeams, TeamsServi
                         },
                         {
                             $unwind: {
-                                $path: "$_team_ledger",
+                                path: "$_team_ledger",
                                 "preserveNullAndEmptyArrays": true
                             }
                         },
