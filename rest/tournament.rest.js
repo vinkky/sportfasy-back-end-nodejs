@@ -1,5 +1,5 @@
-module.exports = function (router, Tournament, User, TournamentTeams, TeamsService) {
-    const mongoose = require('mongoose');
+module.exports = function (router, Tournament, User, TournamentTeams, TournamentService) {
+
     router.route('/tournaments/:userID?/:tournamentMaster?/:name?/:tournament_id?')
         // add new tournament
         .post(function (req, res) {
@@ -50,84 +50,21 @@ module.exports = function (router, Tournament, User, TournamentTeams, TeamsServi
                     case 'name':
                         return {name: req.query.name};
                         break;
+                    case 'tournament_id':
+                        return req.query.tournament_id;
+                        break;
                     default: //sita case tik bus ne gte o ktias
                         return {'end': {$gte: Date()}}
                 }
             }();
 
-            let populateQuery = [
-                {path: '_tournament_master'},
-                {path: '_users'}
-            ];
-
-            let getTournaments = function () {
-                Tournament.find(query).populate(populateQuery).exec(function (err, tournaments) {
-                    if (err) {
-                        console.log('ERROR GETTING TOURNAMENTS: ');
-                        res.status(500).json({error: err});
-                    } else {
-
-                        res.status(200).json(tournaments);
-                    }
-                });
-            }
-
-
-            // let populateTournament = [{path: '_team', populate: [{path: '_players'}, {path: '_team_master'}]}];
-            let populateTournament = [];
-
-            let getTournamentsTotal = function () {
-                TournamentTeams.aggregate([
-                        {$match: {"_tournament": new mongoose.Types.ObjectId(req.query.tournament_id)}},
-                        {
-                            $lookup: {
-                                from: "playersledgers",
-                                localField: "_team",
-                                foreignField: "_team",
-                                as: "_team_ledger"
-                            }
-                        },
-                        {
-                            $unwind: {
-                                path: "$_team_ledger",
-                                "preserveNullAndEmptyArrays": true
-                            }
-                        },
-                        {
-                            $group: {
-                                _id: "$_id",
-                                _team: {$first: "$_team"},
-                                _tournament: {$first: "$_tournament"},
-                                team_total: {$sum: "$_team_ledger._total_income"},
-                            }
-                        },
-                        {$sort: {tournament: 1, team_total: -1,}},
-
-                    ],
-                    function (err, tournaments) {
-                        if (err) {
-                            console.log('error grouping teams in Player Ledger ');
-                        } else {
-                            TournamentTeams.populate(
-                                tournaments, populateTournament, function (err, results) {
-                                    if (err) throw err;
-                                    console.log(JSON.stringify(results, undefined, 2));
-                                    console.log('good');
-                                    return res.send(results);
-                                });
-                        }
-                    }
-                )
-            }
-
-
-            let query_of_total = (function () {
+            (function () {
                 switch (String(Object.keys(req.query).sort())) {
                     case 'tournament_id':
-                        getTournamentsTotal();
+                        new TournamentService().getTournamentTeamsTotal(query, res);
                         break;
                     default:
-                        getTournaments();
+                        new TournamentService().getTournaments(Tournament,query,res);
                 }
             })();
 

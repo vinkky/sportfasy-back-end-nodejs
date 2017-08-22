@@ -15,6 +15,7 @@ let jwt = require('jsonwebtoken');
 let cors = require('cors');
 let config = require('./config.js').get(process.env.NODE_ENV);
 let TeamsService =  require('./services/teams.srv')();
+let TournamentService =  require('./services/tournament.srv')();
 var assert = require('assert');
 
 // allow cross domain connection
@@ -92,7 +93,7 @@ app.listen(config.port, function () {
 app.use('/api', router);
 // ======================================================
 
-require('./rest/tournament.rest.js')(router, Tournament,User,TournamentTeams,TeamsService);
+require('./rest/tournament.rest.js')(router, Tournament,User,TournamentTeams,TournamentService);
 require('./rest/tournament_teams.rest.js')(router, TournamentTeams,Team,TeamsService);
 require('./rest/players_ledger_rest.js')(router, PlayersLedger, Team, Player, Tournament);
 

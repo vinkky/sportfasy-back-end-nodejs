@@ -37,21 +37,13 @@ module.exports = function (router, Team, PlayersLedger, TournamentTeams,TeamsSer
             let query =(function() {
                 switch (String(Object.keys(req.query).sort())) {
                     case 'team_id':
-                        // return {"_team": new mongoose.Types.ObjectId(req.query.team_id)}
                         return new Array(req.query.team_id);
                         break;
                     default:
                         return new Array();
                 }
             })();
-
-            let populateQuery = [{path: '_team', populate: [{path: '_players'},{path: '_team_master'}]}];
-            // let populateQuery = [];
-
-            new TeamsService().getTeamsTotal(query,populateQuery,res);
-
-
-
+            new TeamsService().getTeamsTotal(query,res);
         })
 
         //Update team

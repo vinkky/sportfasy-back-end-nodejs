@@ -1,13 +1,25 @@
 module.exports = function (teams) {
 
     let TournamentTeams = require('../models/tournament_teams');
+    const mongoose = require('mongoose');
 
-    let TeamsService = function (teams) {
+    let TournamentService = function (teams) {
         this.teams = teams;
-        this.populateQuery = [{path: '_team', populate: [{path: '_players'},{path: '_team_master'}]}];
+        this.populateTournament = [
+            {
+                path: '_team',
+                populate: [
+                    {path: '_players'},
+                    {path: '_team_master'}]
+            }];
+
+        this.populateQuery = [
+            {path: '_tournament_master'},
+            {path: '_users'}
+        ];
     }
 
-    TeamsService.prototype.addPosition = function (teams) {
+    TournamentService.prototype.addPosition = function (teams) {
         this.teams = teams.map((team, arrIndex) => {
             team.position = arrIndex + 1;
             return team;
@@ -15,11 +27,10 @@ module.exports = function (teams) {
         return this;
     }
 
-    TeamsService.prototype.getTargetTeams = function (target_ids) {
+    TournamentService.prototype.getTargetTeams = function (target_ids) {
         if (target_ids.length !== 0) {
             this.teams = this.teams.filter((team) => {
                 if (target_ids.indexOf(team._team.toString()) !== -1) {
-                    console.log("target: " + team);
                     return team;
                 }
             })
@@ -27,21 +38,20 @@ module.exports = function (teams) {
         return this;
     }
 
-    TeamsService.prototype.populateTeamsAndResponse = function (res) {
-        console.log(JSON.stringify(this.teams, undefined, 2));
+    TournamentService.prototype.populateTeamsAndPutResponse = function (res) {
         TournamentTeams.populate(
-            this.teams, this.populateQuery, function (err, results) {
+            this.teams, this.populateTournament, function (err, results) {
                 if (err) throw err;
-                // console.log(JSON.stringify(results, undefined, 2));
-                console.log('good');
+                console.log(JSON.stringify(results, undefined, 2));
                 return res.send(results);
             });
     }
 
 
-    TeamsService.prototype.getTeamsTotal = function (query, res) {
+    TournamentService.prototype.getTournamentTeamsTotal = function (query, res) {
         that = this;
         TournamentTeams.aggregate([
+                {$match: {"_tournament": new mongoose.Types.ObjectId(query)}},
                 {
                     $lookup: {
                         from: "playersledgers",
@@ -67,14 +77,30 @@ module.exports = function (teams) {
                 {$sort: {tournament: 1, team_total: -1,}},
 
             ],
-            function (err, teams) {
+            function (err, tournaments) {
                 if (err) {
                     console.log('error grouping teams in Player Ledger ');
                 } else {
-                    that.addPosition(teams).getTargetTeams(query).populateTeamsAndResponse(res);
+                    that.addPosition(tournaments).populateTeamsAndPutResponse(res);
+
                 }
             });
     }
-    return TeamsService;
+
+
+    TournamentService.prototype.getTournaments = function (Tournament,query, res) {
+        Tournament.find(query).populate(this.populateQuery).exec(function (err, tournaments) {
+            if (err) {
+                console.log('ERROR GETTING TOURNAMENTS: ');
+                res.status(500).json({error: err});
+            } else {
+
+                res.status(200).json(tournaments);
+            }
+        });
+    }
+
+
+    return TournamentService;
 }
 
