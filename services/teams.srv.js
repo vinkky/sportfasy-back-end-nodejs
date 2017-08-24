@@ -12,6 +12,7 @@ module.exports = function (teams) {
                 tournament._teams.forEach((team, arrIndex) => {
                     team.position = arrIndex + 1;
                     team._tournament = tournament._id;
+                    team.team_total += tournament._tournament[0].budget;
                     this.teams.push(team);
                 })
             });
@@ -93,11 +94,22 @@ module.exports = function (teams) {
 
                     }
                 },
+                {
+                    $lookup: {
+                        from: "tournaments",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "_tournament"
+                    }
+                },
+
             ],
             function (err, tournaments) {
                 if (err) {
                     console.log('error grouping teams in Player Ledger ');
                 } else {
+                    // console.log(JSON.stringify(tournaments,null,2));
+
                     that.addPosition(tournaments).getTargetTeams(query).populateTeamsAndResponse(res);
                 }
             });

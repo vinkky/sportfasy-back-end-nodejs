@@ -56,7 +56,7 @@ Race.count(function (err, count) {
 //Update data every 30 min
 let previous_race = new Object();
 let next;
-let job = new cron.CronJob('*/10 * * * * * ', function () {
+let job = new cron.CronJob('*/6000 * * * * * ', function () {
     Race.findOne().sort({date: 'descending'}).exec(function (err, race) {
         if (!err) {
             previous_race = race
