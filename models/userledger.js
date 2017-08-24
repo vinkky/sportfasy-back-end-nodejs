@@ -5,7 +5,7 @@ let Schema = mongoose.Schema;
 
 let userledgerSchema = new Schema({
     user_ID: {required: true, type: Schema.ObjectId, ref: 'User'},
-    balance: {type: Number},
+    points: {type: Number},
     team_ID: { type: Schema.ObjectId, ref: 'Team'},
     tournament_ID: { type: Schema.ObjectId, ref: 'Tournament'},
     created_at: Date,

@@ -4,7 +4,7 @@ module.exports = function (router, UserLedger) {
         .get(function (req, res) {
             if (req.query.user_id) {
                 UserLedger.aggregate(
-                    {$group: {_id: req.query.user_id, sum: {$sum: "$balance"}}}, function (err, user_ledger) {
+                    {$group: {_id: req.query.user_id, sum: {$sum: "$points"}}}, function (err, user_ledger) {
                         if (err) {
                             console.log('ERROR GETTING USERLEDGER');
                             res.status(500).json({error: err});
@@ -30,7 +30,7 @@ module.exports = function (router, UserLedger) {
         .post(function (req, res) {
             let userledger = new UserLedger({
                 user_ID: req.body.user_ID,
-                balance: req.body.balance,
+                points: req.body.points,
                 team_ID: req.body.team_ID,
                 tournament_ID: req.body.tournament_ID
             });
