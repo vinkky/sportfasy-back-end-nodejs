@@ -69,7 +69,6 @@ module.exports = function (teams) {
                         team_total: {$sum: "$_team_ledger._total_income"},
                     }
                 },
-
                 {
                     $group: {
                         _id: {
@@ -108,8 +107,6 @@ module.exports = function (teams) {
                 if (err) {
                     console.log('error grouping teams in Player Ledger ');
                 } else {
-                    // console.log(JSON.stringify(tournaments,null,2));
-
                     that.addPosition(tournaments).getTargetTeams(query).populateTeamsAndResponse(res);
                 }
             });

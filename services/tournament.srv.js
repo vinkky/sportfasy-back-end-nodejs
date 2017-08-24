@@ -4,7 +4,7 @@ module.exports = function (teams) {
     const mongoose = require('mongoose');
 
     let TournamentService = function (teams) {
-        this.teams = teams;
+        this.teams = new Array();
         this.populateTournament = [
             {
                 path: '_team',
@@ -19,11 +19,16 @@ module.exports = function (teams) {
         ];
     }
 
-    TournamentService.prototype.addPosition = function (teams) {
-        this.teams = teams.map((team, arrIndex) => {
-            team.position = arrIndex + 1;
-            return team;
-        })
+    TournamentService.prototype.addPosition = function (tournaments) {
+        tournaments.forEach(tournament=>{
+            tournament._teams.forEach((team, arrIndex) => {
+                team.position = arrIndex + 1;
+                team._tournament = tournament._id;
+                team.team_total += tournament._tournament[0].budget;
+                this.teams.push(team);
+            })
+        });
+        console.log(JSON.stringify(this.teams,null,2));
         return this;
     }
 
@@ -74,7 +79,38 @@ module.exports = function (teams) {
                         team_total: {$sum: "$_team_ledger._total_income"},
                     }
                 },
-                {$sort: {tournament: 1, team_total: -1,}},
+                {
+                    $group: {
+                        _id: {
+                            _team: "$_team",
+                            team_total: "$team_total",
+                            _team_master:"$_team_master",
+                        },
+                        doc_id: {$first:  "$_tournament" },
+                    }
+                },
+                {$sort: { "_id.team_total": -1,}},
+                {
+                    $group: {
+                        _id: "$doc_id",
+                        _teams: {
+                            $push: {
+                                _team: "$_id._team",
+                                team_total: "$_id.team_total",
+                                _team_master:"$_id._team_master",
+                            },
+                        },
+
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "tournaments",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "_tournament"
+                    }
+                },
 
             ],
             function (err, tournaments) {
@@ -99,8 +135,6 @@ module.exports = function (teams) {
             }
         });
     }
-
-
     return TournamentService;
 }
 
