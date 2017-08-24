@@ -44,6 +44,9 @@ module.exports = function (router, Tournament, User, TournamentTeams, Tournament
                     case 'userID':
                         return {_users: req.query.userID};
                         break;
+                    case 'tournamentEnded':
+                        return {$and: [{_users: req.query.tournamentEnded}, {'end': {$lte: Date()}}] };
+                        break;
                     case 'tournamentMaster':
                         return {_tournament_master: req.query.tournamentMaster};
                         break;
