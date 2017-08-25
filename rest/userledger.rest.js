@@ -1,18 +1,21 @@
+const mongoose = require('mongoose');
 module.exports = function (router, UserLedger) {
     router.route('/userledger')
     //Get all players
         .get(function (req, res) {
             if (req.query.user_id) {
-                UserLedger.aggregate(
-                    {$group: {_id: req.query.user_id, sum: {$sum: "$points"}}}, function (err, user_ledger) {
-                        if (err) {
-                            console.log('ERROR GETTING USERLEDGER');
-                            res.status(500).json({error: err});
-                        } else {
-                            console.log('SUCCESS GETTING USERLEDGER');
-                            res.status(200).json(user_ledger);
-                        }
-                    });
+                    UserLedger.aggregate([
+                        {$match:  {user_ID: new mongoose.Types.ObjectId(req.query.user_id)}},
+                        {$group: {_id: req.query.user_id, sum: {$sum: "$points"}}}
+                        ], function (err, user_ledger) {
+                            if (err) {
+                                console.log('ERROR GETTING USERLEDGER');
+                                res.status(500).json({error: err});
+                            } else {
+                                console.log('SUCCESS GETTING USERLEDGER');
+                                res.status(200).json(user_ledger);
+                            }
+                        });
             }
             else{
                     UserLedger.find({}, function(err, userledger)
