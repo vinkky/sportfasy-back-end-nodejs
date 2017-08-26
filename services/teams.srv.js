@@ -13,17 +13,31 @@ module.exports = function (teams) {
                     team.position = arrIndex + 1;
                     team._tournament = tournament._id;
                     team.team_total += tournament._tournament[0].budget;
+                    team.trnmt_end_date = tournament._tournament[0].end;
                     this.teams.push(team);
                 })
             });
         return this;
     }
 
-    TeamsService.prototype.getTargetTeams = function (target_ids) {
-        if (target_ids.length !== 0) {
+    TeamsService.prototype.getTargetTeams = function (query) {
+        if (query.team_ids.length !== 0) {
             this.teams = this.teams.filter((team) => {
-                if (target_ids.indexOf(team._team_master.toString()) !== -1) {
-                    console.log("target: " + team);
+                if (query.team_ids.indexOf(team._team_master.toString()) !== -1) {
+                    // console.log("target: " + team);
+                    return team;
+                }
+            })
+        }
+        return this;
+    }
+
+    TeamsService.prototype.getTeamsOfEndedTournaments = function(query){
+
+        if (query.ended_tournaments) {
+            console.log("date target: " + this.teams[0].trnmt_end_date);
+            this.teams = this.teams.filter((team) => {
+                if (team.trnmt_end_date.valueOf() < new Date().valueOf()) {
                     return team;
                 }
             })
@@ -32,7 +46,6 @@ module.exports = function (teams) {
     }
 
     TeamsService.prototype.populateTeamsAndResponse = function (res) {
-        // console.log(JSON.stringify(this.teams, undefined, 2));
         TournamentTeams.populate(
             this.teams, this.populateQuery, function (err, results) {
                 if (err) throw err;
@@ -101,13 +114,12 @@ module.exports = function (teams) {
                         as: "_tournament"
                     }
                 },
-
             ],
             function (err, tournaments) {
                 if (err) {
                     console.log('error grouping teams in Player Ledger ');
                 } else {
-                    that.addPosition(tournaments).getTargetTeams(query).populateTeamsAndResponse(res);
+                    that.addPosition(tournaments).getTargetTeams(query).getTeamsOfEndedTournaments(query).populateTeamsAndResponse(res);
                 }
             });
     }

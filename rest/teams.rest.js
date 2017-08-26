@@ -1,6 +1,6 @@
-module.exports = function (router, Team, PlayersLedger, TournamentTeams,TeamsService) {
+module.exports = function (router, Team, PlayersLedger, TournamentTeams, TeamsService) {
     const mongoose = require('mongoose');
-    router.route('/teams/:team_master_id?')
+    router.route('/teams/:team_master_id?/:ended_tournaments?')
         .post(function (req, res) {
             Team.findOne({name: req.body.name}, function (err, team) {
                 if (!team) {
@@ -34,16 +34,26 @@ module.exports = function (router, Team, PlayersLedger, TournamentTeams,TeamsSer
         //Get all teams
         .get(function (req, res) {
 
-            let query =(function() {
+            let query_obj = (function () {
                 switch (String(Object.keys(req.query).sort())) {
                     case 'team_master_id':
-                        return new Array(req.query.team_master_id);
+                        let query1 = new Object();
+                        query1.team_ids = new Array(req.query.team_master_id);
+                        query1.ended_tournaments = false;
+                        return query1;
+                        break;
+                    case 'ended_tournaments,team_master_id':
+                        let query = new Object();
+                        query.team_ids = new Array(req.query.team_master_id);
+                        query.ended_tournaments = req.query.ended_tournaments;
+
+                        return query;
                         break;
                     default:
                         return new Array();
                 }
             })();
-            new TeamsService().getTeamsTotal(query,res);
+            new TeamsService().getTeamsTotal(query_obj, res);
         })
 
         //Update team
