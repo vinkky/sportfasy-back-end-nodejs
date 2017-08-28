@@ -4,6 +4,9 @@ let Schema = mongoose.Schema;
 let teamPlayersSchema = new Schema({
     _player: { type: Schema.ObjectId, ref: 'Player'},
     _team: { type: Schema.ObjectId, ref: 'Team'},
+    is_sold: {type: Boolean},
+    buy_p: {type: Number},
+    sell_p: {type: Number},
     created_at: Date,
     updated_at: Date
 });
@@ -23,8 +26,8 @@ teamPlayersSchema.pre('save', function (next) {
     next();
 });
 
-teamPlayersSchema.index( { '_team': 1 },{unique: true} );
+// teamPlayersSchema.index( { '_team': 1 },{unique: true} );
 
-let TeamPlayers = mongoose.model('TeamPlayers', tournamentTeamsSchema);
+let TeamPlayers = mongoose.model('TeamPlayers', teamPlayersSchema);
 
 module.exports = TeamPlayers;

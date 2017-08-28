@@ -10,6 +10,7 @@ let PlayersLedger = require('./models/players_ledger');
 let Team = require('./models/teams');
 let Player = require('./models/player');
 let Race = require('./models/race');
+let TeamPlayers = require('./models/team_players');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 let cors = require('cors');
@@ -96,6 +97,7 @@ app.use('/api', router);
 require('./rest/tournament.rest.js')(router, Tournament,User,TournamentTeams,TournamentService);
 require('./rest/tournament_teams.rest.js')(router, TournamentTeams,Team,TeamsService);
 require('./rest/players_ledger_rest.js')(router, PlayersLedger, Team, Player, Tournament);
+require('./rest/team_players.rest.js')(router, TeamPlayers, Team, Player);
 
 require('./rest/users.rest.js')(router, User,jwt, app.get('superSecret'));
 

@@ -14,8 +14,8 @@ module.exports = function (router, PlayersLedger, Team, Player, Tournament) {
                     console.log('ERROR ADDING Income to Player Ledger: ' + err);
                     res.status(500).json({error: err});
                 } else {
-                    console.log('SUCCESS ADDING Income to Player Ledger:: ' + playersLedger);
-                    res.status(200).json({message: 'SUCCESS ADDING Income to Player Ledger:', playersLedger});
+                    // console.log('SUCCESS ADDING Income to Player Ledger:: ' + playersLedger);
+                    res.status(200).json({message: 'SUCCESS ADDING Income to Player Ledger:', player_ledger: playersLedger});
                 }
             });
         })
