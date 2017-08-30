@@ -53,7 +53,7 @@ module.exports = function (router, Tournament, User, TournamentTeams, Tournament
                     case 'tournament_id':
                         return req.query.tournament_id;
                         break;
-                    default: //sita case tik bus ne gte o ktias
+                    default:
                         return {'end': {$gte: Date()}}
                 }
             }();

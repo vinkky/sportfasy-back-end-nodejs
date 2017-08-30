@@ -49,8 +49,6 @@ module.exports = function (teams) {
         TournamentTeams.populate(
             this.teams, this.populateQuery, function (err, results) {
                 if (err) throw err;
-                // console.log(JSON.stringify(results, undefined, 2));
-                console.log('good');
                 return res.send(results);
             });
     }
@@ -119,7 +117,6 @@ module.exports = function (teams) {
                 if (err) {
                     console.log('error grouping teams in Player Ledger ');
                 } else {
-                    console.log('query'+JSON.stringify(query,null,2));
                     that.addPosition(tournaments).getTargetTeams(query).getTeamsOfEndedTournaments(query).populateTeamsAndResponse(res);
                 }
             });

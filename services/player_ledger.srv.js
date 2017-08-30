@@ -26,7 +26,6 @@ module.exports = function(lastRace, players_count){
 
     PlayerLedgerSrv.prototype.insertPlayerIncomes = function () {
 
-        console.log(this.lastRace._id);
         that = this;
 
         Team.collection.find().forEach(function(team) {
@@ -56,22 +55,14 @@ module.exports = function(lastRace, players_count){
                                 playersLedger.save(function (err) {
                                     if (err) {
                                         console.log('ERROR ADDING Income to Player Ledger: ' + err);
-                                        // res.status(500).json({error: err});
+                                        res.status(500).json({error: err});
                                     } else {
                                         console.log('SUCCESS ADDING Income to Player Ledger:: ' + playersLedger);
-                                        // res.status(200).json({message: 'SUCCESS ADDING Income to Player Ledger:', playersLedger});
+                                        res.status(200).json({message: 'SUCCESS ADDING Income to Player Ledger:', playersLedger});
                                     }
                                 });
                             }
                         })
-                        // PlayersLedger.save(obj);
-
-
-
-
-
-
-
                     }
                 })
             })

@@ -28,7 +28,6 @@ module.exports = function (teams) {
                 this.teams.push(team);
             })
         });
-        console.log(JSON.stringify(this.teams,null,2));
         return this;
     }
 
@@ -47,7 +46,6 @@ module.exports = function (teams) {
         TournamentTeams.populate(
             this.teams, this.populateTournament, function (err, results) {
                 if (err) throw err;
-                console.log(JSON.stringify(results, undefined, 2));
                 return res.send(results);
             });
     }

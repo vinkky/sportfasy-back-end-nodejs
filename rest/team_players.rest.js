@@ -64,12 +64,8 @@ module.exports = function (router, TeamPlayers, Team, Player) {
                     res.status(500).json({error: err});
                     return 0;
                 }
-                console.log('inside request'+ req.body.sell_p + JSON.stringify(req.body,null,2))
-                console.log('inside request 2 '+ JSON.stringify(team,null,2))
-
-                    team.sell_p = req.body.sell_p;
+                    team.sell_p = req.body.sell_p || 0;
                     team.is_sold = true;
-                console.log('AFTER UPDATE '+ JSON.stringify(team,null,2))
                 // save team
                 team.save(function (err) {
                     if (err) {
